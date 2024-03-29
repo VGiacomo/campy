@@ -6,8 +6,14 @@ import { validateInput } from "../utils/actions/formActions";
 import { reducer } from "../utils/reducers/formReducer";
 import { signIn } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, Button } from "react-native";
 import { colors } from "../constants/colors";
+import { NavigationProp } from "@react-navigation/native";
+import { auth } from "../../firebaseConfig";
+
+interface RouterProps {
+  navigation: NavigationProp<any, any>;
+}
 
 const initialState = {
   inputValues: {
@@ -21,7 +27,7 @@ const initialState = {
   formIsValid: false,
 };
 
-const SignInForm = () => {
+const SignInForm = ({ navigation }: RouterProps) => {
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
   const [error, setError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
@@ -93,12 +99,18 @@ const SignInForm = () => {
           style={{ marginTop: 20 }}
         />
       ) : (
-        <SubmitButton
-          title="Sign In"
-          onPress={authHandler}
-          style={{ marginTop: 20 }}
-          disabled={!formState.formIsValid}
-        />
+        <>
+          <SubmitButton
+            title="Sign In"
+            onPress={authHandler}
+            style={{ marginTop: 20 }}
+            disabled={!formState.formIsValid}
+          />
+          <Button
+            onPress={() => navigation.navigate("Signup")}
+            title="Sign up"
+          />
+        </>
       )}
     </>
   );

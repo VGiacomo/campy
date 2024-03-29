@@ -6,13 +6,13 @@ import SignupScreen from "./SignupScreen";
 
 const AuthStack = createNativeStackNavigator();
 
-const AuthScreen = () => {
+const AuthScreens = () => {
   return (
-    <AuthStack.Navigator initialRouteName="Login">
+    <AuthStack.Navigator>
       <AuthStack.Screen name="Login" component={LoginScreen} />
       <AuthStack.Screen name="Signup" component={SignupScreen} />
     </AuthStack.Navigator>
   );
 };
 
-export default AuthScreen;
+export default AuthScreens;
