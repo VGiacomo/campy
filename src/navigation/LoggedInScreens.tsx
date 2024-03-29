@@ -115,7 +115,7 @@ export const StackNavigator = () => {
       <Stack.Group screenOptions={{ presentation: "modal" }}>
         <Stack.Screen name="NewChat" component={NewChatScreen} />
 
-        <Stack.Screen name="UserStatuses" component={UserStatusesScreen} />
+        {/* <Stack.Screen name="UserStatuses" component={UserStatusesScreen} /> */}
 
         <Stack.Screen
           name="MessageInfo"
