@@ -7,7 +7,7 @@ import { reducer } from "../utils/reducers/formReducer";
 import { signIn } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
 import { ActivityIndicator, Alert } from "react-native";
-import { colors } from "../constants/colors";
+import { colors } from "../constants";
 
 const initialState = {
   inputValues: {

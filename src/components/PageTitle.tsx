@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View } from "react-native";
-import { colors } from "../constants/colors";
+import { colors } from "../constants";
 
 type Props = {
   text: string;

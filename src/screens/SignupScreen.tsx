@@ -6,7 +6,7 @@ import { reducer } from "../utils/reducers/formReducer";
 import { validateInput } from "../utils/actions/formActions";
 import { signUp } from "../utils/actions/authActions";
 import { ActivityIndicator, Alert } from "react-native";
-import { colors } from "../constants/colors";
+import { colors } from "../constants";
 import { useAppDispatch } from "../utils/store";
 
 const initialState = {

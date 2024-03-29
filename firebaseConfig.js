@@ -1,22 +1,29 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import {
+  API_KEY,
+  AUTH_DOMAIN,
+  PROJECT_ID,
+  STORAGE_BUCKET,
+  MESSAGING_SENDER_ID,
+  APP_ID,
+  DATABASE_URL,
+} from "./.env.local";
 // Optionally import the services that you want to use
 // import {...} from "firebase/auth";
-// import {...} from "firebase/database";
 // import {...} from "firebase/firestore";
 // import {...} from "firebase/functions";
 // import {...} from "firebase/storage";
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAhHUmcSXemUwUVyHtrFcxyu4p--E7KrCo",
-  authDomain: "rn-expo-ts-campy.firebaseapp.com",
-  projectId: "rn-expo-ts-campy",
-  storageBucket: "rn-expo-ts-campy.appspot.com",
-  messagingSenderId: "130664875197",
-  appId: "1:130664875197:web:652618ebfd07fb533463d4",
-  databaseURL:
-    "https://rn-expo-ts-campy-default-rtdb.europe-west1.firebasedatabase.app/",
+  apiKey: API_KEY,
+  authDomain: AUTH_DOMAIN,
+  projectId: PROJECT_ID,
+  storageBucket: STORAGE_BUCKET,
+  messagingSenderId: MESSAGING_SENDER_ID,
+  appId: APP_ID,
+  databaseURL: DATABASE_URL,
 };
 
 // Initialize Firebase

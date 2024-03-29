@@ -14,7 +14,7 @@ import {
   Feather,
 } from "@expo/vector-icons";
 
-import { colors } from "../constants/colors";
+import { colors } from "../constants";
 
 // type Icon = typeof FontAwesome | typeof MaterialCommunityIcons | typeof MaterialIcons | typeof Ionicons | typeof Feather;
 
