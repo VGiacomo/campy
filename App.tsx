@@ -1,8 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Button, StyleSheet, Text, View } from "react-native";
-import LoggedInScreens from "./src/screens/LoggedInScreens";
-import AuthScreens from "./src/screens/AuthScreens";
+import AuthNavigator from "./src/navigation/AuthNavigator";
 import { store } from "./src/utils/store";
 import { Provider } from "react-redux";
 import { useEffect, useState } from "react";
@@ -36,7 +35,7 @@ export default function App() {
           ) : (
             <Stack.Screen
               name="Auth"
-              component={AuthScreens}
+              component={AuthNavigator}
               options={{ headerShown: false }}
             />
           )}
