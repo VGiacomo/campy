@@ -8,6 +8,7 @@ import { Provider } from "react-redux";
 import { useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
+import TabNavigator from "./src/navigation/TabNavigator";
 
 const Stack = createNativeStackNavigator();
 
@@ -28,8 +29,8 @@ export default function App() {
         <Stack.Navigator>
           {user ? (
             <Stack.Screen
-              name="Insider"
-              component={LoggedInScreens}
+              name="Private"
+              component={TabNavigator}
               options={{ headerShown: false }}
             />
           ) : (

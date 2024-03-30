@@ -6,10 +6,11 @@ import { validateInput } from "../utils/actions/formActions";
 import { reducer } from "../utils/reducers/formReducer";
 import { signIn } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
-import { ActivityIndicator, Alert, Button } from "react-native";
+import { ActivityIndicator, Alert, Button, ScrollView } from "react-native";
 import { colors } from "../constants/colors";
 import { NavigationProp } from "@react-navigation/native";
 import { auth } from "../../firebaseConfig";
+import PageContainer from "../components/PageContainer";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -69,50 +70,52 @@ const SignInForm = ({ navigation }: RouterProps) => {
   }, [dispatch, formState]);
 
   return (
-    <>
-      <Input
-        id="email"
-        label="Email"
-        icon="mail"
-        iconPack={Feather}
-        autoCapitalize="none"
-        keyboardType="email-address"
-        onInputChanged={inputChangedHandler}
-        errorText={formState.inputValidities["email"]}
-      />
-
-      <Input
-        id="password"
-        label="Password"
-        icon="lock"
-        iconPack={Feather}
-        autoCapitalize="none"
-        secureTextEntry
-        onInputChanged={inputChangedHandler}
-        errorText={formState.inputValidities["password"]}
-      />
-
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={colors.primary}
-          style={{ marginTop: 20 }}
+    <PageContainer>
+      <ScrollView>
+        <Input
+          id="email"
+          label="Email"
+          icon="mail"
+          iconPack={Feather}
+          autoCapitalize="none"
+          keyboardType="email-address"
+          onInputChanged={inputChangedHandler}
+          errorText={formState.inputValidities["email"]}
         />
-      ) : (
-        <>
-          <SubmitButton
-            title="Sign In"
-            onPress={authHandler}
+
+        <Input
+          id="password"
+          label="Password"
+          icon="lock"
+          iconPack={Feather}
+          autoCapitalize="none"
+          secureTextEntry
+          onInputChanged={inputChangedHandler}
+          errorText={formState.inputValidities["password"]}
+        />
+
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={colors.primary}
             style={{ marginTop: 20 }}
-            disabled={!formState.formIsValid}
           />
-          <Button
-            onPress={() => navigation.navigate("Signup")}
-            title="Sign up"
-          />
-        </>
-      )}
-    </>
+        ) : (
+          <>
+            <SubmitButton
+              title="Sign In"
+              onPress={authHandler}
+              style={{ marginTop: 20 }}
+              disabled={!formState.formIsValid}
+            />
+            <Button
+              onPress={() => navigation.navigate("Signup")}
+              title="Sign up"
+            />
+          </>
+        )}
+      </ScrollView>
+    </PageContainer>
   );
 };
 

@@ -7,18 +7,18 @@ interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
 
-const ListScreen = ({ navigation }: RouterProps) => {
+const FeedScreen = ({ navigation }: RouterProps) => {
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <Button
-        onPress={() => navigation.navigate("Details")}
-        title="Open Details"
+        onPress={() => navigation.navigate("PostDetails")}
+        title="Open Post"
       />
       <Button onPress={() => auth.signOut()} title="Logout" />
     </View>
   );
 };
 
-export default ListScreen;
+export default FeedScreen;
 
 const styles = StyleSheet.create({});
