@@ -1,9 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 // Optionally import the services that you want to use
-// import {...} from "firebase/database";
-// import {...} from "firebase/firestore";
 // import {...} from "firebase/functions";
 // import {...} from "firebase/storage";
 
@@ -29,5 +28,8 @@ export const getFirebaseApp = () => {
 };
 // Initialize Realtime Database and get a reference to the service
 export const database = getDatabase(app);
+
+// Initialize Cloud Firestore and get a reference to the service
+export const dbFirestore = getFirestore(app);
 
 export const auth = getAuth(app);
