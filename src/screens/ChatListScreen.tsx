@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { NavigationProp } from "@react-navigation/native";
 import { auth, dbFirestore } from "../../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
+import SubmitButton from "../components/SubmitButton";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -42,15 +43,15 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button
+      <SubmitButton
         onPress={() => navigation.navigate("PrivateChatScreen")}
         title="New Chat"
       />
-      <Button
+      <SubmitButton
         onPress={() => navigation.navigate("GroupChatScreen")}
         title="New Group"
       />
-      <Button onPress={() => auth.signOut()} title="Logout" />
+      <SubmitButton onPress={() => auth.signOut()} title="Logout" />
       <FlatList
         data={users}
         renderItem={({ item }) => <Text>{item.firstName}</Text>}

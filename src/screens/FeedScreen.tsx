@@ -1,6 +1,7 @@
 import {
   Button,
   FlatList,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -18,6 +19,7 @@ import {
   query,
   where,
 } from "firebase/firestore";
+import SubmitButton from "../components/SubmitButton";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -82,40 +84,34 @@ const FeedScreen = ({ navigation }: RouterProps) => {
       </View>
     );
   };
-  const handleCreatePost = async () => {
-    const docRef = await addDoc(collection(dbFirestore, "posts"), {
-      title: post,
-      text: post,
-      createdAt: new Date().toISOString(),
-      authorId: auth.currentUser?.uid,
-    });
-    console.log("Document written with ID: ", docRef.id);
-  };
+  // const handleCreatePost = async () => {
+  //   const docRef = await addDoc(collection(dbFirestore, "posts"), {
+  //     title: post,
+  //     text: post,
+  //     createdAt: new Date().toISOString(),
+  //     authorId: auth.currentUser?.uid,
+  //   });
+  //   console.log("Document written with ID: ", docRef.id);
+  // };
 
   return (
-    <View style={styles.container}>
-      <TextInput
-        placeholder="What's on your mind?"
-        style={styles.input}
-        value={post}
-        onChangeText={setPost}
-        multiline
-      />
-      <Button
-        title="Create Post"
-        onPress={handleCreatePost}
-        disabled={post == ""}
-      />
-      {posts.length > 0 && (
-        <View>
-          <FlatList
-            data={posts}
-            renderItem={renderPosts}
-            keyExtractor={(todo) => todo.id}
-          />
-        </View>
-      )}
-    </View>
+    <ScrollView>
+      <View style={styles.container}>
+        <SubmitButton
+          title="Create Post"
+          onPress={() => navigation.navigate("CreatePost")}
+        />
+        {posts.length > 0 && (
+          <View>
+            <FlatList
+              data={posts}
+              renderItem={renderPosts}
+              keyExtractor={(todo) => todo.id}
+            />
+          </View>
+        )}
+      </View>
+    </ScrollView>
   );
 };
 
