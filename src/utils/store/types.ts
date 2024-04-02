@@ -16,6 +16,16 @@ export type Users = {
   [K in UserData["userId"]]: UserData;
 };
 
+export type Post = {
+  id: string;
+  title: string;
+  content: string;
+  imageUrl?: string;
+  createdAt: string;
+  authorId: string;
+  likesIds: string[];
+};
+
 export type ChatData = {
   users: string[];
   isGroupChat: boolean;

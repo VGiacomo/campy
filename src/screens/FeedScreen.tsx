@@ -20,28 +20,17 @@ import {
   where,
 } from "firebase/firestore";
 import SubmitButton from "../components/SubmitButton";
+import PostCard from "../components/PostCard";
+import { AddIcon, Fab, FabIcon, FabLabel } from "@gluestack-ui/themed";
+import PageContainer from "../components/PageContainer";
+import { Post } from "../utils/store/types";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
 
-export interface Post {
-  id: string;
-  title: string;
-  text: string;
-  imageUrl?: string;
-  createdAt: string;
-  // updatedAt: string;
-  authorId: string;
-}
-
 const FeedScreen = ({ navigation }: RouterProps) => {
-  const [post, setPost] = useState("");
   const [posts, setPosts] = useState<Post[]>([]);
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
 
   useEffect(() => {
     const todoRef = collection(dbFirestore, "posts");
@@ -53,12 +42,13 @@ const FeedScreen = ({ navigation }: RouterProps) => {
           posts.push({
             id: doc.id,
             title: doc.data().title,
-            text: "",
+            content: doc.data().text,
             createdAt: doc.data().createdAt,
             authorId: doc.data().authorId,
+            likesIds: doc.data().likesIds,
           });
         });
-
+        posts.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
         setPosts(posts);
       },
     });
@@ -69,6 +59,7 @@ const FeedScreen = ({ navigation }: RouterProps) => {
 
   const renderPosts = ({ item }: any) => {
     const ref = doc(dbFirestore, `posts/${item.id}`);
+    console.log(item, "item");
 
     // const toggleDone = async () => {
     //   updateDoc(ref, { done: !item.done });
@@ -79,39 +70,52 @@ const FeedScreen = ({ navigation }: RouterProps) => {
     // };
 
     return (
-      <View>
-        <Text>{item.title}</Text>
-      </View>
+      <PostCard
+        id={item.id}
+        title={item.title}
+        content={item.text}
+        authorId={item.authorId}
+        createdAt={item.createdAt}
+        // image={item.image}
+        likesIds={item.likesIds}
+      />
     );
   };
-  // const handleCreatePost = async () => {
-  //   const docRef = await addDoc(collection(dbFirestore, "posts"), {
-  //     title: post,
-  //     text: post,
-  //     createdAt: new Date().toISOString(),
-  //     authorId: auth.currentUser?.uid,
-  //   });
-  //   console.log("Document written with ID: ", docRef.id);
-  // };
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
-        <SubmitButton
+    <PageContainer>
+      <Fab
+        size="md"
+        placement="bottom right"
+        isHovered={false}
+        isDisabled={false}
+        isPressed={false}
+        onPress={() => navigation.navigate("CreatePost")}
+      >
+        <FabIcon as={AddIcon} mr="$1" />
+        <FabLabel>New Post</FabLabel>
+      </Fab>
+
+      <ScrollView>
+        <View style={styles.container}>
+          {/* <SubmitButton
           title="Create Post"
           onPress={() => navigation.navigate("CreatePost")}
-        />
-        {posts.length > 0 && (
-          <View>
-            <FlatList
-              data={posts}
-              renderItem={renderPosts}
-              keyExtractor={(todo) => todo.id}
-            />
-          </View>
-        )}
-      </View>
-    </ScrollView>
+        /> */}
+          {posts.length > 0 ? (
+            <View>
+              <FlatList
+                data={posts}
+                renderItem={renderPosts}
+                keyExtractor={(todo) => todo.id}
+              />
+            </View>
+          ) : (
+            <Text>No posts yet</Text>
+          )}
+        </View>
+      </ScrollView>
+    </PageContainer>
   );
 };
 

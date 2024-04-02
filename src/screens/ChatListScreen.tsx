@@ -1,9 +1,10 @@
-import { Button, FlatList, StyleSheet, Text, View } from "react-native";
+import { FlatList, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { NavigationProp } from "@react-navigation/native";
 import { auth, dbFirestore } from "../../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import SubmitButton from "../components/SubmitButton";
+import { Button, ButtonIcon, ButtonText } from "@gluestack-ui/themed";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -43,6 +44,10 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <Button>
+        {/* <ButtonIcon as={InfoIcon} mr="$2" /> */}
+        <ButtonText>New Chat</ButtonText>
+      </Button>
       <SubmitButton
         onPress={() => navigation.navigate("PrivateChatScreen")}
         title="New Chat"

@@ -20,19 +20,10 @@ import {
   where,
 } from "firebase/firestore";
 import SubmitButton from "../components/SubmitButton";
+import { Input, InputField } from "@gluestack-ui/themed";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
-}
-
-export interface Post {
-  id: string;
-  title: string;
-  text: string;
-  imageUrl?: string;
-  createdAt: string;
-  // updatedAt: string;
-  authorId: string;
 }
 
 const CreatePostScreen = ({ navigation }: RouterProps) => {
@@ -45,8 +36,9 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
       text: postMessage,
       createdAt: new Date().toISOString(),
       authorId: auth.currentUser?.uid,
+      likesIds: [],
     });
-    console.log("Document written with ID: ", docRef.id);
+    console.log("Document written with ID: ", docRef.id, docRef);
 
     navigation.goBack();
   };
@@ -54,20 +46,29 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
   return (
     <ScrollView>
       <View style={styles.container}>
-        <TextInput
-          placeholder="Post Title"
-          style={styles.input}
-          value={postTitle}
-          onChangeText={setPostTitle}
-          multiline
-        />
-        <TextInput
-          placeholder="What's on your mind?"
-          style={styles.input}
-          value={postMessage}
-          onChangeText={setPostMessage}
-          multiline
-        />
+        <Input
+          variant="outline"
+          size="md"
+          isDisabled={false}
+          isInvalid={false}
+          isReadOnly={false}
+        >
+          <InputField
+            placeholder="Post Title"
+            onChangeText={setPostTitle}
+            value={postTitle}
+          />
+        </Input>
+        <Input style={{ height: 200, marginVertical: 10 }}>
+          <InputField
+            style={{ marginVertical: 10 }}
+            multiline
+            maxLength={300}
+            placeholder="What's on your mind?"
+            onChangeText={setPostMessage}
+            value={postMessage}
+          />
+        </Input>
         <SubmitButton
           title="Publish Post"
           onPress={handleCreatePost}

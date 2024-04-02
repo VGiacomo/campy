@@ -8,6 +8,8 @@ import { useEffect, useState } from "react";
 import { User, onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 import TabNavigator from "./src/navigation/TabNavigator";
+import { GluestackUIProvider } from "@gluestack-ui/themed";
+import { config } from "@gluestack-ui/config";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,25 +25,27 @@ export default function App() {
   }, []);
 
   return (
-    <Provider store={store}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          {user ? (
-            <Stack.Screen
-              name="Private"
-              component={TabNavigator}
-              options={{ headerShown: false }}
-            />
-          ) : (
-            <Stack.Screen
-              name="Auth"
-              component={AuthNavigator}
-              options={{ headerShown: false }}
-            />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </Provider>
+    <GluestackUIProvider config={config}>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            {user ? (
+              <Stack.Screen
+                name="Private"
+                component={TabNavigator}
+                options={{ headerShown: false }}
+              />
+            ) : (
+              <Stack.Screen
+                name="Auth"
+                component={AuthNavigator}
+                options={{ headerShown: false }}
+              />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
+    </GluestackUIProvider>
   );
 }
 
