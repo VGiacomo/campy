@@ -37,14 +37,18 @@ import { doc, updateDoc } from "firebase/firestore";
 import { auth, dbFirestore } from "../../firebaseConfig";
 import { Post } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
-
 // type Icon = typeof FontAwesome | typeof MaterialCommunityIcons | typeof MaterialIcons | typeof Ionicons | typeof Feather;
 
-const PostCard = (props: Post) => {
+interface PostCardProps {
+  post: Post; // Assuming `Post` is a type you have defined elsewhere
+  navigateToPostDetails: () => void;
+}
+
+const PostCard: React.FC<PostCardProps> = ({ post, navigateToPostDetails }) => {
   const [authorData, setAuthorData] = useState<any>();
   useEffect(() => {
     const userData = async () => {
-      const data = await getUserData(props.authorId);
+      const data = await getUserData(post.authorId);
       data && setAuthorData(data);
     };
     userData();
@@ -52,23 +56,20 @@ const PostCard = (props: Post) => {
 
   const iLikeIt = () => {
     const uid = auth.currentUser?.uid;
-    return props.likesIds.includes(uid!);
+    return post.likesIds.includes(uid!);
   };
 
   const onLikePost = async () => {
-    const postRef = doc(dbFirestore, "posts", props.id);
-    console.log(props.likesIds, "likesIds");
-    console.log(props.id, "id");
-    console.log(auth.currentUser, "currentUser");
+    const postRef = doc(dbFirestore, "posts", post.id);
     const uid = auth.currentUser?.uid;
     let newLikesIds = [];
 
     if (iLikeIt()) {
       // uid already exists in likesIds, remove it
-      newLikesIds = props.likesIds.filter((id) => id !== uid);
+      newLikesIds = post.likesIds.filter((id) => id !== uid);
     } else {
       // uid not found, just add it
-      newLikesIds = [...props.likesIds, uid];
+      newLikesIds = [...post.likesIds, uid];
     }
     await updateDoc(postRef, {
       likesIds: newLikesIds,
@@ -99,7 +100,7 @@ const PostCard = (props: Post) => {
               month: "short",
               day: "2-digit",
               year: "numeric",
-            }).format(new Date(props.createdAt))}
+            }).format(new Date(post.createdAt))}
           </Text>
         </VStack>
       </HStack>
@@ -119,7 +120,7 @@ const PostCard = (props: Post) => {
           fontFamily="$heading"
           //    mb="$4"
         >
-          {props.title}
+          {post.title}
         </Heading>
       </HStack>
       <HStack space="md">
@@ -133,11 +134,11 @@ const PostCard = (props: Post) => {
             size={24}
             color={iLikeIt() ? "blue" : "black"}
           />
-          {props.likesIds.length}
+          {post.likesIds.length}
         </Pressable>
         <Pressable
           onPress={() => {
-            console.log("hello");
+            navigateToPostDetails();
           }}
         >
           <Foundation name="comments" size={24} />

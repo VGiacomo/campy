@@ -24,6 +24,19 @@ export type Post = {
   createdAt: string;
   authorId: string;
   likesIds: string[];
+  commentsIds: string[];
+};
+
+export type Comment = {
+  id: string;
+  postId: string;
+  text: string;
+  authorId: string;
+  authorName: string;
+  authorImageUrl?: string;
+  createdAt: string;
+  repliesIds: string[];
+  likesIds: string[];
 };
 
 export type ChatData = {

@@ -46,6 +46,7 @@ const FeedScreen = ({ navigation }: RouterProps) => {
             createdAt: doc.data().createdAt,
             authorId: doc.data().authorId,
             likesIds: doc.data().likesIds,
+            commentsIds: doc.data().commentsIds,
           });
         });
         posts.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
@@ -71,13 +72,8 @@ const FeedScreen = ({ navigation }: RouterProps) => {
 
     return (
       <PostCard
-        id={item.id}
-        title={item.title}
-        content={item.text}
-        authorId={item.authorId}
-        createdAt={item.createdAt}
-        // image={item.image}
-        likesIds={item.likesIds}
+        post={item}
+        navigateToPostDetails={() => navigation.navigate("PostDetails", item)}
       />
     );
   };
