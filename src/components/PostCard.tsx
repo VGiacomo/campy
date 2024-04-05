@@ -37,15 +37,25 @@ import { doc, updateDoc } from "firebase/firestore";
 import { auth, dbFirestore } from "../../firebaseConfig";
 import { Post } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
+import { useAppDispatch } from "../utils/store";
+import { setPost } from "../utils/store/postSlice";
 // type Icon = typeof FontAwesome | typeof MaterialCommunityIcons | typeof MaterialIcons | typeof Ionicons | typeof Feather;
 
 interface PostCardProps {
-  post: Post; // Assuming `Post` is a type you have defined elsewhere
+  post: Post;
   navigateToPostDetails: () => void;
+  parentScreen: string;
 }
 
-const PostCard: React.FC<PostCardProps> = ({ post, navigateToPostDetails }) => {
+const PostCard: React.FC<PostCardProps> = ({
+  post,
+  navigateToPostDetails,
+  parentScreen,
+}) => {
   const [authorData, setAuthorData] = useState<any>();
+  const currentUserId = auth.currentUser!.uid;
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
     const userData = async () => {
       const data = await getUserData(post.authorId);
@@ -55,25 +65,29 @@ const PostCard: React.FC<PostCardProps> = ({ post, navigateToPostDetails }) => {
   }, []);
 
   const iLikeIt = () => {
-    const uid = auth.currentUser?.uid;
-    return post.likesIds.includes(uid!);
+    return post.likesIds.includes(currentUserId!);
   };
 
   const onLikePost = async () => {
     const postRef = doc(dbFirestore, "posts", post.id);
-    const uid = auth.currentUser?.uid;
-    let newLikesIds = [];
+    let newLikesIds: string[] = [];
 
+    console.log(post.likesIds, "post *****************");
     if (iLikeIt()) {
       // uid already exists in likesIds, remove it
-      newLikesIds = post.likesIds.filter((id) => id !== uid);
+      newLikesIds = post.likesIds.filter((id) => id !== currentUserId);
     } else {
       // uid not found, just add it
-      newLikesIds = [...post.likesIds, uid];
+      newLikesIds = [...post.likesIds, currentUserId];
     }
     await updateDoc(postRef, {
       likesIds: newLikesIds,
     });
+  };
+
+  const navigateToComments = () => {
+    dispatch(setPost(post));
+    navigateToPostDetails();
   };
 
   return (
@@ -96,11 +110,11 @@ const PostCard: React.FC<PostCardProps> = ({ post, navigateToPostDetails }) => {
         <VStack>
           <Heading size="sm">{authorData?.firstLast}</Heading>
           <Text size="sm">
-            {new Intl.DateTimeFormat("en-GB", {
-              month: "short",
+            {new Date(post.createdAt).toLocaleDateString("en-GB", {
               day: "2-digit",
+              month: "short",
               year: "numeric",
-            }).format(new Date(post.createdAt))}
+            })}
           </Text>
         </VStack>
       </HStack>
@@ -138,7 +152,7 @@ const PostCard: React.FC<PostCardProps> = ({ post, navigateToPostDetails }) => {
         </Pressable>
         <Pressable
           onPress={() => {
-            navigateToPostDetails();
+            parentScreen === "Feed" ? navigateToComments() : {};
           }}
         >
           <Foundation name="comments" size={24} />

@@ -2,6 +2,7 @@ import { Action, ThunkAction, configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector, TypedUseSelectorHook } from "react-redux";
 
 import authSlice from "./authSlice";
+import postSlice from "./postSlice";
 // import usersSlice from "./usersSlice";
 // import chatsSlice from "./chatsSlice";
 // import chatMessagesSlice from "./chatMessagesSlice";
@@ -10,6 +11,7 @@ import authSlice from "./authSlice";
 export const store = configureStore({
   reducer: {
     auth: authSlice,
+    post: postSlice,
     // storedUsers: usersSlice,
     // chats: chatsSlice,
     // messages: chatMessagesSlice,

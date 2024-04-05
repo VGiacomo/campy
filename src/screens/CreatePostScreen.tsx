@@ -35,7 +35,7 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
       title: postTitle,
       text: postMessage,
       createdAt: new Date().toISOString(),
-      authorId: auth.currentUser?.uid,
+      authorId: auth.currentUser!.uid,
       likesIds: [],
     });
     console.log("Document written with ID: ", docRef.id, docRef);

@@ -59,8 +59,8 @@ const FeedScreen = ({ navigation }: RouterProps) => {
   }, []);
 
   const renderPosts = ({ item }: any) => {
-    const ref = doc(dbFirestore, `posts/${item.id}`);
-    console.log(item, "item");
+    // const ref = doc(dbFirestore, `posts/${item.id}`);
+    // console.log(item, "item");
 
     // const toggleDone = async () => {
     //   updateDoc(ref, { done: !item.done });
@@ -74,6 +74,7 @@ const FeedScreen = ({ navigation }: RouterProps) => {
       <PostCard
         post={item}
         navigateToPostDetails={() => navigation.navigate("PostDetails", item)}
+        parentScreen={"Feed"}
       />
     );
   };
