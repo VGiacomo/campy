@@ -62,9 +62,9 @@ const SignUpScreen = () => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert("An error occurred!", error, [
-        { text: "Okay", onPress: () => setError(undefined) },
-      ]);
+      // Alert.alert("An error occurred!", error, [
+      //   { text: "Okay", onPress: () => setError(undefined) },
+      // ]);
     }
   }, [error]);
 

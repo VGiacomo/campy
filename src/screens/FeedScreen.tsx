@@ -24,6 +24,7 @@ import PostCard from "../components/PostCard";
 import { AddIcon, Fab, FabIcon, FabLabel } from "@gluestack-ui/themed";
 import PageContainer from "../components/PageContainer";
 import { Post } from "../utils/store/types";
+import { SafeAreaView } from "@gluestack-ui/themed";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -33,9 +34,9 @@ const FeedScreen = ({ navigation }: RouterProps) => {
   const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
-    const todoRef = collection(dbFirestore, "posts");
+    const postRef = collection(dbFirestore, "posts");
 
-    const subscriber = onSnapshot(todoRef, {
+    const subscriber = onSnapshot(postRef, {
       next: (snapshot) => {
         const posts: Post[] = [];
         snapshot.docs.forEach((doc) => {
@@ -90,23 +91,21 @@ const FeedScreen = ({ navigation }: RouterProps) => {
         onPress={() => navigation.navigate("CreatePost")}
       >
         <FabIcon as={AddIcon} mr="$1" />
-        <FabLabel>New Post</FabLabel>
+        <FabLabel>
+          <Text>New Post</Text>
+        </FabLabel>
       </Fab>
 
       <ScrollView>
         <View style={styles.container}>
-          {/* <SubmitButton
-          title="Create Post"
-          onPress={() => navigation.navigate("CreatePost")}
-        /> */}
           {posts.length > 0 ? (
-            <View>
+            <SafeAreaView style={{ flex: 1 }}>
               <FlatList
                 data={posts}
                 renderItem={renderPosts}
-                keyExtractor={(todo) => todo.id}
+                keyExtractor={(post) => post.id}
               />
-            </View>
+            </SafeAreaView>
           ) : (
             <Text>No posts yet</Text>
           )}

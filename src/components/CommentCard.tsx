@@ -1,23 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  //   Text,
-  TextInput,
-  // Image,
-  View,
-  TextInputProps,
-  Pressable,
-} from "react-native";
-import {
-  FontAwesome,
-  Foundation,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  Ionicons,
-  Feather,
-} from "@expo/vector-icons";
+import { View, Pressable } from "react-native";
+import { Foundation } from "@expo/vector-icons";
 
-import { colors } from "../constants/colors";
 import {
   Avatar,
   AvatarFallbackText,
@@ -26,30 +10,24 @@ import {
   HStack,
   Heading,
   Text,
-  Icon,
-  Image,
-  Link,
-  LinkText,
-  MenuItem,
-  StarIcon,
   VStack,
 } from "@gluestack-ui/themed";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, dbFirestore } from "../../firebaseConfig";
-import { Post } from "../utils/store/types";
+import { Comment, Post } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
 import { setStatePost } from "../utils/store/postSlice";
 // type Icon = typeof FontAwesome | typeof MaterialCommunityIcons | typeof MaterialIcons | typeof Ionicons | typeof Feather;
 
-interface PostCardProps {
-  post: Post;
+interface CommentCardProps {
+  comment: Comment;
   navigateToPostDetails: () => void;
   parentScreen: string;
 }
 
-const PostCard: React.FC<PostCardProps> = ({
-  post,
+const CommentCard: React.FC<CommentCardProps> = ({
+  comment: comment,
   navigateToPostDetails,
   parentScreen,
 }) => {
@@ -59,36 +37,30 @@ const PostCard: React.FC<PostCardProps> = ({
 
   useEffect(() => {
     const userData = async () => {
-      const data = await getUserData(post.authorId);
+      const data = await getUserData(comment.authorId);
       data && setAuthorData(data);
     };
     userData();
   }, []);
 
   const iLikeIt = () => {
-    return post.likesIds.includes(currentUserId!);
+    return comment.likesIds.includes(currentUserId!);
   };
 
   const onLikePost = async () => {
-    const postRef = doc(dbFirestore, "posts", post.id);
+    const commentRef = doc(dbFirestore, "comments", comment.id);
     let newLikesIds: string[] = [];
 
-    console.log(post.likesIds, "post *****************");
     if (iLikeIt()) {
       // uid already exists in likesIds, remove it
-      newLikesIds = post.likesIds.filter((id) => id !== currentUserId);
+      newLikesIds = comment.likesIds.filter((id) => id !== currentUserId);
     } else {
       // uid not found, just add it
-      newLikesIds = [...post.likesIds, currentUserId];
+      newLikesIds = [...comment.likesIds, currentUserId];
     }
-    await updateDoc(postRef, {
+    await updateDoc(commentRef, {
       likesIds: newLikesIds,
     });
-  };
-
-  const navigateToComments = () => {
-    dispatch(setStatePost(post));
-    navigateToPostDetails();
   };
 
   if (!authorData) return null;
@@ -114,7 +86,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <VStack>
           <Heading size="sm">{authorData?.firstLast}</Heading>
           <Text size="sm">
-            {new Date(post.createdAt).toLocaleDateString("en-GB", {
+            {new Date(comment.createdAt).toLocaleDateString("en-GB", {
               day: "2-digit",
               month: "short",
               year: "numeric",
@@ -122,24 +94,12 @@ const PostCard: React.FC<PostCardProps> = ({
           </Text>
         </VStack>
       </HStack>
-      {post.imageUrl && (
-        <Image
-          alt="post image"
-          // mb="$1"
-          // h={240}
-          width={300}
-          borderRadius={5}
-          source={{
-            uri: post.imageUrl,
-          }}
-        />
-      )}
       <Heading
         //   size="md"
         fontFamily="$heading"
         //    mb="$4"
       >
-        {post.title}
+        {comment.text}
       </Heading>
       <HStack space="md">
         <Pressable
@@ -153,19 +113,12 @@ const PostCard: React.FC<PostCardProps> = ({
             color={iLikeIt() ? "blue" : "black"}
           />
           <View>
-            <Text>{post.likesIds.length}</Text>
+            <Text>{comment.likesIds.length}</Text>
           </View>
-        </Pressable>
-        <Pressable
-          onPress={() => {
-            parentScreen === "Feed" ? navigateToComments() : {};
-          }}
-        >
-          <Foundation name="comments" size={24} />
         </Pressable>
       </HStack>
     </Card>
   );
 };
 
-export default PostCard;
+export default CommentCard;

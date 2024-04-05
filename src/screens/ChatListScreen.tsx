@@ -5,6 +5,7 @@ import { auth, dbFirestore } from "../../firebaseConfig";
 import { collection, getDocs } from "firebase/firestore";
 import SubmitButton from "../components/SubmitButton";
 import { Button, ButtonIcon, ButtonText } from "@gluestack-ui/themed";
+import { SafeAreaView } from "@gluestack-ui/themed";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -57,11 +58,13 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
         title="New Group"
       />
       <SubmitButton onPress={() => auth.signOut()} title="Logout" />
-      <FlatList
-        data={users}
-        renderItem={({ item }) => <Text>{item.firstName}</Text>}
-        keyExtractor={(item) => item.id}
-      />
+      <SafeAreaView style={{ flex: 1 }}>
+        <FlatList
+          data={users}
+          renderItem={({ item }) => <Text>{item.firstName}</Text>}
+          keyExtractor={(item) => item.id}
+        />
+      </SafeAreaView>
     </View>
   );
 };
