@@ -33,10 +33,12 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
   const handleCreatePost = async () => {
     const docRef = await addDoc(collection(dbFirestore, "posts"), {
       title: postTitle,
-      text: postMessage,
+      content: postMessage,
       createdAt: new Date().toISOString(),
       authorId: auth.currentUser!.uid,
       likesIds: [],
+      imageUrl: "",
+      commentsIds: [],
     });
     console.log("Document written with ID: ", docRef.id, docRef);
 

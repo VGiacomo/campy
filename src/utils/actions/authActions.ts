@@ -108,7 +108,6 @@ export const signIn = (credentials: SignInParams) => {
       const millisecondsUntilExpiry = expiryDate.valueOf() - timeNow.valueOf();
 
       const userData = await getUserData(uid);
-
       saveDataToStorage({
         token: accessToken,
         userId: uid,
@@ -224,7 +223,8 @@ export const getUserData = async (userId: string) => {
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
-      return docSnap.data();
+      const data = { ...docSnap.data(), userId };
+      return data;
     } else {
       // docSnap.data() will be undefined in this case
       console.log("No user corresponds to this ID!");

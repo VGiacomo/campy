@@ -39,6 +39,17 @@ export type Comment = {
   likesIds: string[];
 };
 
+export type CommentReply = {
+  id: string;
+  commentId: string;
+  text: string;
+  authorId: string;
+  authorName: string;
+  authorImageUrl?: string;
+  createdAt: string;
+  likesIds: string[];
+};
+
 export type ChatData = {
   users: string[];
   isGroupChat: boolean;

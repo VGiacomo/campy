@@ -38,7 +38,7 @@ import { auth, dbFirestore } from "../../firebaseConfig";
 import { Post } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
-import { setPost } from "../utils/store/postSlice";
+import { setStatePost } from "../utils/store/postSlice";
 // type Icon = typeof FontAwesome | typeof MaterialCommunityIcons | typeof MaterialIcons | typeof Ionicons | typeof Feather;
 
 interface PostCardProps {
@@ -86,7 +86,7 @@ const PostCard: React.FC<PostCardProps> = ({
   };
 
   const navigateToComments = () => {
-    dispatch(setPost(post));
+    dispatch(setStatePost(post));
     navigateToPostDetails();
   };
 
@@ -125,7 +125,9 @@ const PostCard: React.FC<PostCardProps> = ({
         width={300}
         borderRadius={5}
         source={{
-          uri: "https://images.unsplash.com/photo-1529693662653-9d480530a697?q=80&w=2831&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          uri:
+            post.imageUrl ||
+            "https://images.unsplash.com/photo-1529693662653-9d480530a697?q=80&w=2831&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
         }}
       />
       <HStack space="md" alignItems="center">
