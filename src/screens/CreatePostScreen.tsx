@@ -23,6 +23,7 @@ import SubmitButton from "../components/SubmitButton";
 import { Input, InputField } from "@gluestack-ui/themed";
 import ImagePicker from "../components/ImagePicker";
 import { Image } from "@gluestack-ui/themed";
+import { createPost } from "../utils/actions/postActions";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -34,16 +35,21 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
   const [postImageUrl, setPostImageUrl] = useState("");
 
   const handleCreatePost = async () => {
-    const docRef = await addDoc(collection(dbFirestore, "posts"), {
+    // const docRef = await addDoc(collection(dbFirestore, "posts"), {
+    //   title: postTitle,
+    //   content: postMessage,
+    //   createdAt: new Date().toISOString(),
+    //   authorId: auth.currentUser!.uid,
+    //   likesIds: [],
+    //   imageUrl: postImageUrl,
+    //   commentsIds: [],
+    // });
+    // console.log("Document written with ID: ", docRef.id, docRef);
+    await createPost(auth.currentUser!.uid, {
       title: postTitle,
       content: postMessage,
-      createdAt: new Date().toISOString(),
-      authorId: auth.currentUser!.uid,
-      likesIds: [],
       imageUrl: postImageUrl,
-      commentsIds: [],
     });
-    console.log("Document written with ID: ", docRef.id, docRef);
 
     navigation.goBack();
   };

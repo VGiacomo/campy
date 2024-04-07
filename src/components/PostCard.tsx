@@ -40,6 +40,7 @@ import { Post } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
 import { setStatePost } from "../utils/store/postSlice";
+import MenuButton from "./MenuButton";
 // type Icon = typeof FontAwesome | typeof MaterialCommunityIcons | typeof MaterialIcons | typeof Ionicons | typeof Feather;
 
 interface PostCardProps {
@@ -121,13 +122,13 @@ const PostCard: React.FC<PostCardProps> = ({
             })}
           </Text>
         </VStack>
+        <View style={{ flex: 1, justifyContent: "flex-end" }}>
+          <MenuButton postId={post.id} postCommentsIds={post.commentsIds} />
+        </View>
       </HStack>
       {post.imageUrl && (
         <Image
           alt="post image"
-          // mb="$1"
-          // h={240}
-          // width={300}
           size="lg"
           borderRadius={5}
           source={{
