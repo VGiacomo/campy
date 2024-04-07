@@ -43,11 +43,12 @@ const FeedScreen = ({ navigation }: RouterProps) => {
           posts.push({
             id: doc.id,
             title: doc.data().title,
-            content: doc.data().text,
+            content: doc.data().content,
             createdAt: doc.data().createdAt,
             authorId: doc.data().authorId,
             likesIds: doc.data().likesIds,
             commentsIds: doc.data().commentsIds,
+            imageUrl: doc.data().imageUrl,
           });
         });
         posts.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));

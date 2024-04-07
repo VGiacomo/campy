@@ -127,7 +127,8 @@ const PostCard: React.FC<PostCardProps> = ({
           alt="post image"
           // mb="$1"
           // h={240}
-          width={300}
+          // width={300}
+          size="lg"
           borderRadius={5}
           source={{
             uri: post.imageUrl,
@@ -141,6 +142,9 @@ const PostCard: React.FC<PostCardProps> = ({
       >
         {post.title}
       </Heading>
+      <View>
+        <Text>{post.content}</Text>
+      </View>
       <HStack space="md">
         <Pressable
           onPress={() => {

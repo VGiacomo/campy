@@ -21,6 +21,8 @@ import {
 } from "firebase/firestore";
 import SubmitButton from "../components/SubmitButton";
 import { Input, InputField } from "@gluestack-ui/themed";
+import ImagePicker from "../components/ImagePicker";
+import { Image } from "@gluestack-ui/themed";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -29,6 +31,7 @@ interface RouterProps {
 const CreatePostScreen = ({ navigation }: RouterProps) => {
   const [postTitle, setPostTitle] = useState("");
   const [postMessage, setPostMessage] = useState("");
+  const [postImageUrl, setPostImageUrl] = useState("");
 
   const handleCreatePost = async () => {
     const docRef = await addDoc(collection(dbFirestore, "posts"), {
@@ -37,7 +40,7 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
       createdAt: new Date().toISOString(),
       authorId: auth.currentUser!.uid,
       likesIds: [],
-      imageUrl: "",
+      imageUrl: postImageUrl,
       commentsIds: [],
     });
     console.log("Document written with ID: ", docRef.id, docRef);
@@ -71,6 +74,15 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
             value={postMessage}
           />
         </Input>
+        <ImagePicker setPostImageUrl={setPostImageUrl} />
+        {postImageUrl && (
+          <Image
+            alt="post image"
+            source={{ uri: postImageUrl }}
+            style={styles.image}
+          />
+        )}
+
         <SubmitButton
           title="Publish Post"
           onPress={handleCreatePost}
@@ -92,6 +104,12 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginVertical: 10,
+    alignSelf: "center",
   },
 });
 
