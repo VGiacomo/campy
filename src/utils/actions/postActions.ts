@@ -18,6 +18,8 @@ import {
   deleteDoc,
   doc,
   getDoc,
+  getDocs,
+  query,
   setDoc,
   updateDoc,
   where,
@@ -73,12 +75,15 @@ export const updatePost = async (postId: string, postData: Post) => {
 export const deletePost = async (postId: string, postCommentsIds: string[]) => {
   try {
     if (postCommentsIds.length > 0) {
-      //   await Promise.all(
-      //     postCommentsIds.map((commentId) =>
-      //       deleteDoc(doc(dbFirestore, "comments", commentId))
-      //     )
-      //   );
-      await deleteDoc(doc(dbFirestore, "comments", "postId", "==", postId));
+      const q = query(
+        collection(dbFirestore, "comments"),
+        where("postId", "==", postId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
     }
     await deleteDoc(doc(dbFirestore, "posts", postId));
   } catch (err) {

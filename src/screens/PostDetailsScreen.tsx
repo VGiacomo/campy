@@ -27,6 +27,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { SafeAreaView } from "@gluestack-ui/themed";
 import CommentCard from "../components/CommentCard";
+import { createComment } from "../utils/actions/commentActions";
 interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
@@ -80,23 +81,17 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
   }, []);
 
   const handleCreateComment = async () => {
-    console.log(loggedInUser, "loggedInUser");
-    const docRef = await addDoc(collection(dbFirestore, "comments"), {
+    const commentData = {
       authorId: loggedInUser?.userId,
       authorImageUrl: loggedInUser?.profilePicture,
       authorName: loggedInUser?.firstLast,
-      likesIds: [],
-      repliesIds: [],
       text: newComment,
-      createdAt: new Date().toISOString(),
       postId: upToDatePost!.id,
-    });
-    const postRef = doc(dbFirestore, "posts", upToDatePost!.id);
-    await updateDoc(postRef, {
-      commentsIds: arrayUnion(docRef.id),
-    });
-    console.log("Document written with ID: ", docRef.id, docRef);
+    };
+    createComment(commentData);
+    setNewComment("");
   };
+
   const renderComments = ({ item }: any) => {
     // const ref = doc(dbFirestore, `posts/${item.id}`);
     // console.log(item, "item");

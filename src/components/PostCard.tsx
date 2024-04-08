@@ -123,7 +123,12 @@ const PostCard: React.FC<PostCardProps> = ({
           </Text>
         </VStack>
         <View style={{ flex: 1, justifyContent: "flex-end" }}>
-          <MenuButton postId={post.id} postCommentsIds={post.commentsIds} />
+          <MenuButton
+            postId={post.id}
+            postCommentsIds={post.commentsIds}
+            authorId={post.authorId}
+            loggedInUserId={currentUserId}
+          />
         </View>
       </HStack>
       {post.imageUrl && (

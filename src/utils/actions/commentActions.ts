@@ -1,5 +1,6 @@
 import {
   addDoc,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -20,24 +21,25 @@ import { getDatabase, ref } from "firebase/database";
 
 let timer: NodeJS.Timeout;
 // TODO check these methods (WIP)
-export const createComment = async (
-  loggedInUserId: string,
-  commentData: any
-) => {
+export const createComment = async (commentData: any) => {
   try {
-    const docRef = await addDoc(collection(dbFirestore, "comments"), {
-      title: commentData.title,
+    const commentRef = await addDoc(collection(dbFirestore, "comments"), {
       text: commentData.text,
       createdAt: new Date().toISOString(),
-      authorId: loggedInUserId,
+      authorId: commentData.authorId,
+      postId: commentData.postId,
       authorName: commentData.authorName,
       authorImageUrl: commentData.authorImageUrl,
       likesIds: [],
       repliesIds: [],
     });
-    console.log("Document written with ID: ", docRef.id, docRef);
+    console.log("Document written with ID: ", commentRef.id, commentRef);
 
-    return docRef.id;
+    const postRef = doc(dbFirestore, "posts", commentData.postId);
+    await updateDoc(postRef, {
+      commentsIds: arrayUnion(commentRef.id),
+    });
+    return commentRef.id;
   } catch (err) {
     throw new Error(
       "Something went wrong while creating a new comment. Please try again later."
@@ -47,12 +49,11 @@ export const createComment = async (
 
 export const updateComment = async (commentId: string, commentData: Post) => {
   try {
-    const docRef = await updateDoc(doc(dbFirestore, "posts", commentId), {
-      title: commentData.title,
+    const commentRef = await updateDoc(doc(dbFirestore, "posts", commentId), {
       content: commentData.content,
       imageUrl: commentData.imageUrl,
     });
-    return docRef;
+    return commentRef;
   } catch (err) {
     throw new Error(
       "Something went wrong while updating a comment. Please try again later."
