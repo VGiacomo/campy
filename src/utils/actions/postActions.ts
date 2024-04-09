@@ -57,9 +57,9 @@ export const createPost = async (loggedInUserId: string, postData: any) => {
   }
 };
 
-export const updatePost = async (postId: string, postData: Post) => {
+export const updatePost = async (postData: Post) => {
   try {
-    const docRef = await updateDoc(doc(dbFirestore, "posts", postId), {
+    const docRef = await updateDoc(doc(dbFirestore, "posts", postData.id), {
       title: postData.title,
       content: postData.content,
       imageUrl: postData.imageUrl,

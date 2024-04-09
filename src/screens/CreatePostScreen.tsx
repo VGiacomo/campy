@@ -23,7 +23,10 @@ import SubmitButton from "../components/SubmitButton";
 import { Input, InputField } from "@gluestack-ui/themed";
 import ImagePicker from "../components/ImagePicker";
 import { Image } from "@gluestack-ui/themed";
-import { createPost } from "../utils/actions/postActions";
+import { createPost, updatePost } from "../utils/actions/postActions";
+import { useAppSelector } from "../utils/store";
+import { useDispatch } from "react-redux";
+import { setStatePost } from "../utils/store/postSlice";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -33,25 +36,37 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
   const [postTitle, setPostTitle] = useState("");
   const [postMessage, setPostMessage] = useState("");
   const [postImageUrl, setPostImageUrl] = useState("");
+  const selectedPost = useAppSelector((state) => state.post.postData);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (selectedPost) {
+      setPostTitle(selectedPost?.title);
+      setPostMessage(selectedPost.content);
+      setPostImageUrl(selectedPost?.imageUrl || "");
+    }
+  }, []);
 
   const handleCreatePost = async () => {
-    // const docRef = await addDoc(collection(dbFirestore, "posts"), {
-    //   title: postTitle,
-    //   content: postMessage,
-    //   createdAt: new Date().toISOString(),
-    //   authorId: auth.currentUser!.uid,
-    //   likesIds: [],
-    //   imageUrl: postImageUrl,
-    //   commentsIds: [],
-    // });
-    // console.log("Document written with ID: ", docRef.id, docRef);
-    await createPost(auth.currentUser!.uid, {
-      title: postTitle,
-      content: postMessage,
-      imageUrl: postImageUrl,
-    });
+    if (!selectedPost) {
+      await createPost(auth.currentUser!.uid, {
+        title: postTitle,
+        content: postMessage,
+        imageUrl: postImageUrl,
+      });
 
-    navigation.goBack();
+      navigation.goBack();
+    } else {
+      await updatePost({
+        ...selectedPost,
+        title: postTitle,
+        content: postMessage,
+        imageUrl: postImageUrl,
+      });
+      dispatch(setStatePost(null));
+
+      navigation.goBack();
+    }
   };
 
   return (
@@ -90,7 +105,7 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
         )}
 
         <SubmitButton
-          title="Publish Post"
+          title={!selectedPost ? "Publish Post" : "Update Post"}
           onPress={handleCreatePost}
           disabled={postTitle == "" || postMessage == ""}
         />

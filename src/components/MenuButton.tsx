@@ -15,12 +15,15 @@ import {
 } from "@gluestack-ui/themed";
 import React from "react";
 import { deletePost } from "../utils/actions/postActions";
+import { Post } from "../utils/store/types";
+import { useNavigation } from "@react-navigation/native";
 // import { Button } from "react-native";
+import type { CompositeNavigationProp } from "@react-navigation/native";
+import { useAppDispatch } from "../utils/store";
+import { setStatePost } from "../utils/store/postSlice";
 
 type MenuItemProps = {
-  postId: string;
-  postCommentsIds: string[];
-  authorId: string;
+  post: Post;
   loggedInUserId: string;
   // text: string;
   // icon: string;
@@ -28,12 +31,15 @@ type MenuItemProps = {
   // onSelect: () => void;
 };
 
-function MenuButton({
-  postId,
-  postCommentsIds,
-  authorId,
-  loggedInUserId,
-}: MenuItemProps) {
+function MenuButton({ post, loggedInUserId }: MenuItemProps) {
+  const navigation = useNavigation<any>();
+  const dispatch = useAppDispatch();
+
+  function goToEditPost() {
+    dispatch(setStatePost(post));
+    navigation.navigate("CreatePost");
+  }
+
   return (
     <Menu
       style={{ backgroundColor: "white", width: 100 }}
@@ -51,16 +57,22 @@ function MenuButton({
         );
       }}
     >
-      <MenuItem key="Edit" textValue="Edit">
+      <MenuItem
+        key="Edit"
+        textValue="Edit"
+        onPress={() => {
+          goToEditPost();
+        }}
+      >
         <Icon as={EditIcon} size="sm" mr="$2" />
         <MenuItemLabel size="sm">Edit</MenuItemLabel>
       </MenuItem>
-      {authorId === loggedInUserId && (
+      {post.authorId === loggedInUserId && (
         <MenuItem
           key="Delete"
           textValue="Delete"
-          disabled={authorId !== loggedInUserId}
-          onPress={() => deletePost(postId, postCommentsIds)}
+          disabled={post.authorId !== loggedInUserId}
+          onPress={() => deletePost(post.id, post.commentsIds)}
         >
           <Icon as={CloseIcon} size="sm" mr="$2" />
           <MenuItemLabel size="sm">Delete</MenuItemLabel>

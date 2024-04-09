@@ -35,6 +35,7 @@ const ImagePicker: React.FC<Props> = ({ setPostImageUrl }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginVertical: 20,
     alignItems: "center",
     justifyContent: "center",
   },
