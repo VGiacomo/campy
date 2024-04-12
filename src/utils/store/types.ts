@@ -1,3 +1,26 @@
+enum TravelWith {
+  Solo,
+  Couple,
+  Family,
+  Group,
+}
+
+export const languageOptions = [
+  "English",
+  "Italian",
+  "French",
+  "German",
+  "Spanish",
+  "Portuguese",
+  "Russian",
+  "Chinese",
+  "Japanese",
+  "Korean",
+  // "Vietnamese",
+  "Arabic",
+  // "Hindi",
+];
+
 export type UserData = {
   userId: string;
   email: string;
@@ -7,6 +30,8 @@ export type UserData = {
   signUpDate: string;
   about?: string;
   profilePicture?: string;
+  spokenLanguages?: string[];
+  // travelWith: TravelWith;
   pushTokens?: {
     [id: string]: string;
   };

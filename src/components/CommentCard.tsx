@@ -18,7 +18,6 @@ import { Comment, Post } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
 import { setStatePost } from "../utils/store/postSlice";
-// type Icon = typeof FontAwesome | typeof MaterialCommunityIcons | typeof MaterialIcons | typeof Ionicons | typeof Feather;
 
 interface CommentCardProps {
   comment: Comment;
@@ -77,9 +76,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
           <AvatarImage
             alt="avatar"
             source={{
-              uri:
-                authorData?.profilePicture ||
-                "https://randomuser.me/api/portraits/lego/1.jpg",
+              uri: authorData?.profilePicture,
             }}
           />
         </Avatar>

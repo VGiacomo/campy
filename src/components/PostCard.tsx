@@ -106,9 +106,7 @@ const PostCard: React.FC<PostCardProps> = ({
           <AvatarImage
             alt="avatar"
             source={{
-              uri:
-                authorData?.profilePicture ||
-                "https://randomuser.me/api/portraits/lego/1.jpg",
+              uri: authorData?.profilePicture,
             }}
           />
         </Avatar>
