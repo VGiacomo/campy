@@ -6,19 +6,15 @@ import { collection, getDocs } from "firebase/firestore";
 import SubmitButton from "../components/SubmitButton";
 import { Button, ButtonIcon, ButtonText } from "@gluestack-ui/themed";
 import { SafeAreaView } from "@gluestack-ui/themed";
+import UserCard from "../components/UserCard";
+import { UserData } from "../utils/store/types";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
 
-type User = {
-  id: string;
-  firstName: string;
-  lastName: string;
-};
-
 const ChatListScreen = ({ navigation }: RouterProps) => {
-  const [users, setUsers] = useState<User[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
 
   useEffect(() => {
     fetchData();
@@ -34,9 +30,7 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
     querySnapshot.forEach((doc) => {
       // doc.data() is never undefined for query doc snapshots
       DATA.push({
-        id: doc.id,
-        firstName: doc.data().firstName,
-        lastName: doc.data().lastName,
+        ...doc.data(),
       });
     });
     console.log(DATA, "DATA");
@@ -61,8 +55,8 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList
           data={users}
-          renderItem={({ item }) => <Text>{item.firstName}</Text>}
-          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <UserCard user={item} />}
+          keyExtractor={(item) => item.userId}
         />
       </SafeAreaView>
     </View>
