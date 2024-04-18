@@ -1,23 +1,7 @@
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  //   Text,
-  TextInput,
-  // Image,
-  View,
-  TextInputProps,
-  Pressable,
-} from "react-native";
-import {
-  FontAwesome,
-  Foundation,
-  MaterialCommunityIcons,
-  MaterialIcons,
-  Ionicons,
-  Feather,
-} from "@expo/vector-icons";
+import { View, Pressable } from "react-native";
+import { Foundation } from "@expo/vector-icons";
 
-import { colors } from "../constants/colors";
 import {
   Avatar,
   AvatarFallbackText,
@@ -26,12 +10,7 @@ import {
   HStack,
   Heading,
   Text,
-  Icon,
   Image,
-  Link,
-  LinkText,
-  MenuItem,
-  StarIcon,
   VStack,
 } from "@gluestack-ui/themed";
 import { doc, updateDoc } from "firebase/firestore";
@@ -67,14 +46,13 @@ const PostCard: React.FC<PostCardProps> = ({
   }, []);
 
   const iLikeIt = () => {
-    return post.likesIds.includes(currentUserId!);
+    return post.likesIds.includes(currentUserId);
   };
 
   const onLikePost = async () => {
     const postRef = doc(dbFirestore, "posts", post.id);
     let newLikesIds: string[] = [];
 
-    console.log(post.likesIds, "post *****************");
     if (iLikeIt()) {
       // uid already exists in likesIds, remove it
       newLikesIds = post.likesIds.filter((id) => id !== currentUserId);
@@ -120,9 +98,11 @@ const PostCard: React.FC<PostCardProps> = ({
             })}
           </Text>
         </VStack>
-        <View style={{ flex: 1, justifyContent: "flex-end" }}>
-          <MenuButton post={post} loggedInUserId={currentUserId} />
-        </View>
+        {parentScreen === "Feed" && auth.currentUser?.uid === post.authorId && (
+          <View style={{ flex: 1, alignItems: "flex-end" }}>
+            <MenuButton item={post} loggedInUserId={currentUserId} />
+          </View>
+        )}
       </HStack>
       {post.imageUrl && (
         <Image
@@ -141,23 +121,29 @@ const PostCard: React.FC<PostCardProps> = ({
       >
         {post.title}
       </Heading>
-      <View>
-        <Text>{post.content}</Text>
-      </View>
+      <Text>{post.content}</Text>
       <HStack space="md">
         <Pressable
           onPress={() => {
             onLikePost();
           }}
+          style={{ alignSelf: "center" }}
         >
-          <Foundation
-            name="like"
-            size={24}
-            color={iLikeIt() ? "blue" : "black"}
-          />
-          <View>
-            <Text>{post.likesIds.length}</Text>
-          </View>
+          <HStack space="md">
+            <Foundation
+              name="like"
+              size={24}
+              color={iLikeIt() ? "blue" : "black"}
+            />
+            <Text
+              style={{
+                color: iLikeIt() ? "blue" : "black",
+                alignSelf: "center",
+              }}
+            >
+              {post.likesIds.length}
+            </Text>
+          </HStack>
         </Pressable>
         <Pressable
           onPress={() => {

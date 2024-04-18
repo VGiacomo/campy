@@ -63,10 +63,10 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
         content: postMessage,
         imageUrl: postImageUrl,
       });
-      dispatch(setStatePost(null));
 
       navigation.goBack();
     }
+    dispatch(setStatePost(null));
   };
 
   return (

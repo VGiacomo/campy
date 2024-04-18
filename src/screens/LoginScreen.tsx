@@ -52,6 +52,22 @@ const SignInForm = () =>
         // ]);
       }
     }, [error]);
+    // TODO fix enabled submit button when email or password are empty
+    // useEffect(() => {
+    //   if (
+    //     formState.inputValues["password"] === "" &&
+    //     formState.inputValues["email"] !== ""
+    //   ) {
+    //     inputChangedHandler("password", "");
+    //   }
+
+    //   if (
+    //     formState.inputValues["email"] === "" &&
+    //     formState.inputValues["password"] !== ""
+    //   ) {
+    //     inputChangedHandler("email", "");
+    //   }
+    // }, [formState.inputValues]);
 
     const authHandler = useCallback(async () => {
       try {

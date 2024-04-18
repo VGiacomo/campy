@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { NavigationProp } from "@react-navigation/native";
 import PostCard from "../components/PostCard";
 import { useAppSelector } from "../utils/store";
-import { Post } from "../utils/store/types";
+import { Comment, Post } from "../utils/store/types";
 import {
   addDoc,
   arrayUnion,
@@ -33,29 +33,16 @@ interface RouterProps {
 }
 const PostDetailsScreen = ({ navigation }: RouterProps) => {
   let selectedPost = useAppSelector((state) => state.post.postData);
-  const [posts, setPosts] = useState<Post[]>([]);
-  let upToDatePost = posts.find((post) => post.id === selectedPost!.id);
+  const [upToDatePost, setUpToDatePost] = useState(selectedPost);
+  // let upToDatePost = posts.find((post) => post.id === selectedPost!.id);
   const [newComment, setNewComment] = useState("");
   const loggedInUser = useAppSelector((state) => state.auth.userData);
   const [comments, setComments] = useState<Comment[]>([]);
 
   useEffect(() => {
     const postsRef = collection(dbFirestore, "posts");
-    const getComments = async (postId: string) => {
-      const q = query(
-        collection(dbFirestore, "comments"),
-        where("postId", "==", postId)
-      );
 
-      const querySnapshot = await getDocs(q);
-      const postComments: Comment[] = [];
-      querySnapshot.forEach((doc) => {
-        postComments.push(doc.data() as Comment);
-      });
-      setComments(postComments);
-    };
-
-    const subscriber = onSnapshot(postsRef, {
+    const subscriberPosts = onSnapshot(postsRef, {
       next: (snapshot) => {
         const posts: Post[] = [];
         snapshot.docs.forEach((doc) => {
@@ -63,22 +50,58 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
             id: doc.id,
             title: doc.data().title,
             content: doc.data().text,
+            imageUrl: doc.data().imageUrl,
             createdAt: doc.data().createdAt,
             authorId: doc.data().authorId,
             likesIds: doc.data().likesIds,
             commentsIds: doc.data().commentsIds,
           });
         });
-        posts.sort((a, b) => (a.createdAt > b.createdAt ? -1 : 1));
-        setPosts(posts);
-        console.log(selectedPost!.id, "upToDatePost");
-        getComments(selectedPost!.id);
+        const changedPost = posts.find((post) => post.id === selectedPost!.id);
+        setUpToDatePost(changedPost!);
+        // console.log(upToDatePost, "upToDatePost");
+        // getComments(selectedPost!.id);
       },
     });
 
     // // Unsubscribe from events when no longer in use
-    return () => subscriber();
+    return () => {
+      subscriberPosts();
+    };
   }, []);
+
+  useEffect(() => {
+    const commentsRef = collection(dbFirestore, "comments");
+
+    const subscriberComments = onSnapshot(commentsRef, {
+      next: (snapshot) => {
+        const comments: Comment[] = [];
+        snapshot.docs.forEach((doc) => {
+          comments.push({
+            id: doc.id,
+            text: doc.data().text,
+            createdAt: doc.data().createdAt,
+            authorId: doc.data().authorId,
+            authorName: doc.data().authorName,
+            authorImageUrl: doc.data().authorImageUrl,
+            likesIds: doc.data().likesIds,
+            repliesIds: doc.data().repliesIds,
+            postId: doc.data().postId,
+          });
+        });
+        const thisPostComments = comments.filter(
+          (comment) => comment.postId === selectedPost!.id
+        );
+        setComments(thisPostComments);
+      },
+    });
+    // // Unsubscribe from events when no longer in use
+    return () => {
+      subscriberComments();
+    };
+  }, []);
+
+  useEffect(() => {}, [selectedPost]);
 
   const handleCreateComment = async () => {
     const commentData = {
@@ -113,7 +136,7 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
     );
   };
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {upToDatePost ? (
         <PostCard
           post={upToDatePost}
@@ -129,12 +152,12 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
           title="Create Post"
           onPress={() => navigation.navigate("CreatePost")}
         /> */}
-          {posts.length > 0 ? (
+          {comments ? (
             <SafeAreaView style={{ flex: 1 }}>
               <FlatList
                 data={comments}
                 renderItem={renderComments}
-                // keyExtractor={(item) => item.id}
+                // keyExtractor={(comment) => comment.id}
               />
             </SafeAreaView>
           ) : (
@@ -142,7 +165,7 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
           )}
         </View>
       </ScrollView>
-      <Input style={{ width: 200, alignSelf: "center" }}>
+      <Input style={{ width: "100%", alignSelf: "center" }}>
         <InputField
           type="text"
           placeholder="Write a comment"
@@ -163,7 +186,7 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
           ) : null}
         </InputSlot>
       </Input>
-    </View>
+    </SafeAreaView>
   );
 };
 

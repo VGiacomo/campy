@@ -14,10 +14,10 @@ import {
 } from "@gluestack-ui/themed";
 import { doc, updateDoc } from "firebase/firestore";
 import { auth, dbFirestore } from "../../firebaseConfig";
-import { Comment, Post } from "../utils/store/types";
+import { Comment } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
-import { setStatePost } from "../utils/store/postSlice";
+import MenuButton from "./MenuButton";
 
 interface CommentCardProps {
   comment: Comment;
@@ -43,10 +43,10 @@ const CommentCard: React.FC<CommentCardProps> = ({
   }, []);
 
   const iLikeIt = () => {
-    return comment.likesIds.includes(currentUserId!);
+    return comment.likesIds.includes(currentUserId);
   };
 
-  const onLikePost = async () => {
+  const onLikeComment = async () => {
     const commentRef = doc(dbFirestore, "comments", comment.id);
     let newLikesIds: string[] = [];
 
@@ -90,6 +90,11 @@ const CommentCard: React.FC<CommentCardProps> = ({
             })}
           </Text>
         </VStack>
+        {currentUserId === comment.authorId && (
+          <View style={{ flex: 1, alignItems: "flex-end" }}>
+            <MenuButton item={comment} loggedInUserId={currentUserId} />
+          </View>
+        )}
       </HStack>
       <Heading
         //   size="md"
@@ -101,17 +106,25 @@ const CommentCard: React.FC<CommentCardProps> = ({
       <HStack space="md">
         <Pressable
           onPress={() => {
-            onLikePost();
+            onLikeComment();
           }}
+          style={{ alignSelf: "center" }}
         >
-          <Foundation
-            name="like"
-            size={24}
-            color={iLikeIt() ? "blue" : "black"}
-          />
-          <View>
-            <Text>{comment.likesIds.length}</Text>
-          </View>
+          <HStack space="md">
+            <Foundation
+              name="like"
+              size={24}
+              color={iLikeIt() ? "blue" : "black"}
+            />
+            <Text
+              style={{
+                color: iLikeIt() ? "blue" : "black",
+                alignSelf: "center",
+              }}
+            >
+              {comment.likesIds.length}
+            </Text>
+          </HStack>
         </Pressable>
       </HStack>
     </Card>
