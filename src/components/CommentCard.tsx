@@ -9,6 +9,8 @@ import {
   Card,
   HStack,
   Heading,
+  InputField,
+  InputSlot,
   Text,
   VStack,
 } from "@gluestack-ui/themed";
@@ -18,6 +20,9 @@ import { Comment } from "../utils/store/types";
 import { getUserData } from "../utils/actions/authActions";
 import { useAppDispatch } from "../utils/store";
 import MenuButton from "./MenuButton";
+import { FontAwesome } from "@expo/vector-icons";
+import { Input } from "@gluestack-ui/themed";
+import { deleteComment, updateComment } from "../utils/actions/commentActions";
 
 interface CommentCardProps {
   comment: Comment;
@@ -31,6 +36,8 @@ const CommentCard: React.FC<CommentCardProps> = ({
   parentScreen,
 }) => {
   const [authorData, setAuthorData] = useState<any>(null);
+  const [isEditable, setIsEditable] = useState<boolean>(false);
+  const [commentText, setCommentText] = useState<string>(comment.text);
   const currentUserId = auth.currentUser!.uid;
   const dispatch = useAppDispatch();
 
@@ -44,6 +51,15 @@ const CommentCard: React.FC<CommentCardProps> = ({
 
   const iLikeIt = () => {
     return comment.likesIds.includes(currentUserId);
+  };
+
+  const onEditComment = () => {
+    const upToDateComment = {
+      ...comment,
+      text: commentText,
+    };
+    updateComment(comment.id, upToDateComment);
+    setIsEditable(false);
   };
 
   const onLikeComment = async () => {
@@ -101,7 +117,39 @@ const CommentCard: React.FC<CommentCardProps> = ({
         fontFamily="$heading"
         //    mb="$4"
       >
-        {comment.text}
+        {!isEditable ? (
+          <HStack space="md" marginBottom={3}>
+            <Text>{comment.text}</Text>
+
+            <FontAwesome
+              name="edit"
+              size={24}
+              color="black"
+              onPress={() => setIsEditable(true)}
+            />
+          </HStack>
+        ) : (
+          <HStack space="md" marginBottom={3}>
+            <Input variant="outline" size="md">
+              <InputField
+                type="text"
+                placeholder="Your comment"
+                onChangeText={setCommentText}
+                value={commentText}
+              />
+              <InputSlot pr="$3">
+                {commentText !== "" && (
+                  <FontAwesome
+                    name="save"
+                    size={24}
+                    color="black"
+                    onPress={() => onEditComment()}
+                  />
+                )}
+              </InputSlot>
+            </Input>
+          </HStack>
+        )}
       </Heading>
       <HStack space="md">
         <Pressable

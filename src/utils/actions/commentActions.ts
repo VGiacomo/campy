@@ -1,5 +1,6 @@
 import {
   addDoc,
+  arrayRemove,
   arrayUnion,
   collection,
   deleteDoc,
@@ -16,7 +17,7 @@ import Constants from "expo-constants";
 import { dbFirestore, getFirebaseApp } from "../../../firebaseConfig";
 import { authenticate, logout } from "../store/authSlice";
 import { ApplicationDispatch } from "../store";
-import { Post, UserData } from "../store/types";
+import { Comment, Post, UserData } from "../store/types";
 import { getDatabase, ref } from "firebase/database";
 
 let timer: NodeJS.Timeout;
@@ -47,12 +48,18 @@ export const createComment = async (commentData: any) => {
   }
 };
 
-export const updateComment = async (commentId: string, commentData: Post) => {
+export const updateComment = async (
+  commentId: string,
+  commentData: Comment
+) => {
   try {
-    const commentRef = await updateDoc(doc(dbFirestore, "posts", commentId), {
-      content: commentData.content,
-      imageUrl: commentData.imageUrl,
-    });
+    const commentRef = await updateDoc(
+      doc(dbFirestore, "comments", commentId),
+      {
+        text: commentData.text,
+        // imageUrl: commentData.imageUrl,
+      }
+    );
     return commentRef;
   } catch (err) {
     throw new Error(
@@ -63,9 +70,21 @@ export const updateComment = async (commentId: string, commentData: Post) => {
 
 export const deleteComment = async (
   commentId: string,
-  repliesIds: string[]
+  repliesIds: string[],
+  postId: string
 ) => {
   try {
+    // Update the parent post's `commentsIds` array
+    const postDocRef = doc(dbFirestore, "posts", postId);
+
+    const postDocSnap = await getDoc(postDocRef);
+
+    if (postDocSnap.exists()) {
+      // Remove the comment ID from the post's `commentsIds`
+      await updateDoc(postDocRef, {
+        commentsIds: arrayRemove(commentId),
+      });
+    }
     if (repliesIds.length > 0) {
       //   await Promise.all(
       //     postCommentsIds.map((commentId) =>
