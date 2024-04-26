@@ -112,44 +112,42 @@ const CommentCard: React.FC<CommentCardProps> = ({
           </View>
         )}
       </HStack>
-      <Heading
-        //   size="md"
-        fontFamily="$heading"
-        //    mb="$4"
-      >
-        {!isEditable ? (
-          <HStack space="md" marginBottom={3}>
-            <Text>{comment.text}</Text>
-
+      <Heading>
+        <HStack space="md" marginBottom={3} display="flex">
+          {isEditable ? (
+            <Input
+              variant="outline"
+              size="md"
+              style={{ flex: 1 }} // Ensure it takes the correct space
+            >
+              <InputField
+                type="text"
+                placeholder="Your comment"
+                onChangeText={(text) => setCommentText(text)}
+                value={commentText}
+                autoFocus // Focus when editable
+              />
+              <InputSlot pr="$3">
+                <FontAwesome
+                  name="save"
+                  size={24}
+                  color="black"
+                  onPress={onEditComment}
+                />
+              </InputSlot>
+            </Input>
+          ) : (
+            <Text style={{ flex: 1 }}>{commentText}</Text> // Display comment text when not editable
+          )}
+          {!isEditable && (
             <FontAwesome
               name="edit"
               size={24}
               color="black"
               onPress={() => setIsEditable(true)}
             />
-          </HStack>
-        ) : (
-          <HStack space="md" marginBottom={3}>
-            <Input variant="outline" size="md">
-              <InputField
-                type="text"
-                placeholder="Your comment"
-                onChangeText={setCommentText}
-                value={commentText}
-              />
-              <InputSlot pr="$3">
-                {commentText !== "" && (
-                  <FontAwesome
-                    name="save"
-                    size={24}
-                    color="black"
-                    onPress={() => onEditComment()}
-                  />
-                )}
-              </InputSlot>
-            </Input>
-          </HStack>
-        )}
+          )}
+        </HStack>
       </Heading>
       <HStack space="md">
         <Pressable
