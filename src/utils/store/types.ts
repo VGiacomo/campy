@@ -77,16 +77,17 @@ export type CommentReply = {
 
 export type ChatData = {
   users: string[];
-  isGroupChat: boolean;
-  chatName: ChatData["isGroupChat"] extends true ? string : undefined;
-  chatImage?: string;
+  usersNames: string[];
+  // isGroupChat: boolean;
+  // chatName: ChatData["isGroupChat"] extends true ? string : undefined;
+  usersImages: string[];
   createdBy: string;
   updatedBy: string;
   createdAt: string;
   updatedAt: string;
   latestMessageText?: string;
   chatId: string;
-  key: string; // chatId
+  // key: string; // chatId
 };
 
 export type Seen = {
@@ -123,3 +124,10 @@ export type Status = {
     };
   };
 };
+
+export enum ImageType {
+  ChatImage = "chatImages",
+  PostImage = "postImages",
+  StatusImage = "statusImages",
+  ProfileImage = "profileImages",
+}

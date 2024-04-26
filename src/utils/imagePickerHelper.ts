@@ -8,6 +8,7 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
+import { ImageType } from "./store/types";
 
 export const launchImagePicker = async () => {
   await checkMediaPermissions();
@@ -45,11 +46,7 @@ export const openCamera = async () => {
   }
 };
 
-export const uploadImageAsync = async (
-  uri: string,
-  isChatImage = false,
-  isStatusImage = false
-) => {
+export const uploadImageAsync = async (uri: string, imageType: ImageType) => {
   const app = getFirebaseApp();
 
   const blob: any = await new Promise((resolve, reject) => {
@@ -68,11 +65,21 @@ export const uploadImageAsync = async (
     xhr.send();
   });
 
-  const pathFolder = isChatImage
-    ? "chatImages"
-    : isStatusImage
-    ? "statusImages"
-    : "profileImages";
+  let pathFolder: string;
+  switch (imageType) {
+    case ImageType.ChatImage:
+      pathFolder = ImageType.ChatImage;
+      break;
+    case ImageType.PostImage:
+      pathFolder = ImageType.PostImage;
+      break;
+    case ImageType.StatusImage:
+      pathFolder = ImageType.StatusImage;
+      break;
+    case ImageType.ProfileImage:
+    default:
+      pathFolder = ImageType.ProfileImage; // Default to profileImages if not specified
+  }
   const storageRef = ref(getStorage(app), `${pathFolder}/${uuid.v4()}`);
 
   await uploadBytesResumable(storageRef, blob);

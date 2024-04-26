@@ -19,6 +19,7 @@ import {
 } from "../utils/imagePickerHelper";
 import { updateLoggedInUserData } from "../utils/store/authSlice";
 import { colors } from "../constants";
+import { ImageType } from "../utils/store/types";
 // import { updateChatData } from "../utils/actions/chatActions";
 
 type Props = {
@@ -47,7 +48,7 @@ const ProfileImage = (props: Props) => {
 
       // Upload the image
       setIsLoading(true);
-      const uploadUrl = await uploadImageAsync(tempUri);
+      const uploadUrl = await uploadImageAsync(tempUri, ImageType.ProfileImage);
       setIsLoading(false);
       console.log(uploadUrl, "uploadUrl");
       if (!uploadUrl) {

@@ -1,24 +1,8 @@
-import {
-  Button,
-  FlatList,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { NavigationProp } from "@react-navigation/native";
-import { auth, dbFirestore } from "../../firebaseConfig";
-import {
-  getDocs,
-  collection,
-  addDoc,
-  doc,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { auth, dbFirestore, storage } from "../../firebaseConfig";
+import { ref } from "firebase/storage";
 import SubmitButton from "../components/SubmitButton";
 import { Input, InputField } from "@gluestack-ui/themed";
 import ImagePicker from "../components/ImagePicker";
@@ -36,6 +20,7 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
   const [postTitle, setPostTitle] = useState("");
   const [postMessage, setPostMessage] = useState("");
   const [postImageUrl, setPostImageUrl] = useState("");
+  const [uploading, setUploading] = useState(false); // New state for upload status
   const selectedPost = useAppSelector((state) => state.post.postData);
   const dispatch = useDispatch();
 
@@ -45,28 +30,38 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
       setPostMessage(selectedPost.content);
       setPostImageUrl(selectedPost?.imageUrl || "");
     }
-  }, []);
+  }, [selectedPost]); // Added dependency to re-run if selectedPost changes
 
   const handleCreatePost = async () => {
-    if (!selectedPost) {
-      await createPost(auth.currentUser!.uid, {
-        title: postTitle,
-        content: postMessage,
-        imageUrl: postImageUrl,
-      });
+    try {
+      if (postImageUrl) {
+        // If there's an image to upload, upload it and get the download URL
+        // const downloadUrl = await handleImageUpload(postImageUrl);
+        // setPostImageUrl(downloadUrl); // Set the download URL as the postImageUrl
+      }
 
-      navigation.goBack();
-    } else {
-      await updatePost({
-        ...selectedPost,
-        title: postTitle,
-        content: postMessage,
-        imageUrl: postImageUrl,
-      });
+      if (!selectedPost) {
+        // Creating a new post
+        await createPost(auth.currentUser!.uid, {
+          title: postTitle,
+          content: postMessage,
+          imageUrl: postImageUrl,
+        });
+      } else {
+        // Updating an existing post
+        await updatePost({
+          ...selectedPost,
+          title: postTitle,
+          content: postMessage,
+          imageUrl: postImageUrl,
+        });
+      }
 
-      navigation.goBack();
+      navigation.goBack(); // Go back to the previous screen
+      dispatch(setStatePost(null)); // Reset the state
+    } catch (error) {
+      console.error("Error creating/updating post:", error);
     }
-    dispatch(setStatePost(null));
   };
 
   return (
@@ -95,7 +90,12 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
             value={postMessage}
           />
         </Input>
-        <ImagePicker setPostImageUrl={setPostImageUrl} />
+        <ImagePicker
+          setPostImageUrl={setPostImageUrl}
+          postImageUrl={postImageUrl}
+          setUploading={setUploading}
+          userId={auth.currentUser!.uid}
+        />
         {postImageUrl && (
           <Image
             alt="post image"
@@ -107,31 +107,26 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
         <SubmitButton
           title={!selectedPost ? "Publish Post" : "Update Post"}
           onPress={handleCreatePost}
-          disabled={postTitle == "" || postMessage == ""}
+          disabled={postTitle === "" || postMessage === "" || uploading}
         />
       </View>
     </ScrollView>
   );
 };
 
+export default CreatePostScreen;
+
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     padding: 20,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: "gray",
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 5,
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   image: {
     width: 200,
     height: 200,
-    marginVertical: 10,
-    alignSelf: "center",
+    borderRadius: 10,
+    marginVertical: 20,
   },
 });
-
-export default CreatePostScreen;

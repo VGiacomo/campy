@@ -1,27 +1,55 @@
 import { useState } from "react";
 import { Button, Image, View, StyleSheet } from "react-native";
 import * as ImagePickerModule from "expo-image-picker";
+import {
+  launchImagePicker,
+  uploadImageAsync,
+} from "../utils/imagePickerHelper";
+import { updateSignedInUserData } from "../utils/actions/authActions";
+import { updateLoggedInUserData } from "../utils/store/authSlice";
+import { useAppDispatch } from "../utils/store";
+import { ImageType } from "../utils/store/types";
 
 interface Props {
   setPostImageUrl: React.Dispatch<React.SetStateAction<string>>;
+  setUploading: React.Dispatch<React.SetStateAction<boolean>>;
+  postImageUrl: string;
+  userId: string;
 }
 
-const ImagePicker: React.FC<Props> = ({ setPostImageUrl }) => {
-  //   const [image, setImage] = useState<string | null>(null);
+const ImagePicker: React.FC<Props> = ({
+  setPostImageUrl,
+  postImageUrl,
+  setUploading,
+  userId,
+}) => {
+  const dispatch = useAppDispatch();
 
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
-    let result = await ImagePickerModule.launchImageLibraryAsync({
-      mediaTypes: ImagePickerModule.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      const tempUri = await launchImagePicker();
 
-    console.log(result);
+      if (!tempUri) return;
 
-    if (!result.canceled) {
-      setPostImageUrl(result.assets[0].uri);
+      // Upload the image
+      setUploading(true);
+      const uploadUrl = await uploadImageAsync(tempUri, ImageType.PostImage);
+      setUploading(false);
+
+      if (!uploadUrl) {
+        throw new Error("Could not upload image");
+      }
+
+      const newData = { profilePicture: uploadUrl };
+
+      await updateSignedInUserData(userId, newData);
+      dispatch(updateLoggedInUserData({ newData }));
+      // }
+
+      setPostImageUrl(uploadUrl);
+    } catch (error) {
+      console.log(error);
+      setUploading(false);
     }
   };
 
