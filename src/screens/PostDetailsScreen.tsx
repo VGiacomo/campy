@@ -116,17 +116,6 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
   };
 
   const renderComments = ({ item }: any) => {
-    // const ref = doc(dbFirestore, `posts/${item.id}`);
-    // console.log(item, "item");
-
-    // const toggleDone = async () => {
-    //   updateDoc(ref, { done: !item.done });
-    // };
-
-    // const deleteItem = async () => {
-    //   deleteDoc(ref);
-    // };
-
     return (
       <CommentCard
         comment={item}
@@ -147,7 +136,7 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
         <Text>No post found</Text>
       )}
       <ScrollView>
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
           {/* <SubmitButton
           title="Create Post"
           onPress={() => navigation.navigate("CreatePost")}
@@ -163,7 +152,7 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
           ) : (
             <Text>No comments yet</Text>
           )}
-        </View>
+        </SafeAreaView>
       </ScrollView>
       <Input style={{ width: "100%", alignSelf: "center" }}>
         <InputField

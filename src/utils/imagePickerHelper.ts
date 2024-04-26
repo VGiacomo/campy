@@ -77,7 +77,7 @@ export const uploadImageAsync = async (
 
   await uploadBytesResumable(storageRef, blob);
 
-  blob.close();
+  // blob.close();
 
   return await getDownloadURL(storageRef);
 };
