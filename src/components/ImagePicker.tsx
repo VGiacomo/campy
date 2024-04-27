@@ -9,6 +9,8 @@ import { updateSignedInUserData } from "../utils/actions/authActions";
 import { updateLoggedInUserData } from "../utils/store/authSlice";
 import { useAppDispatch } from "../utils/store";
 import { ImageType } from "../utils/store/types";
+import SubmitButton from "./SubmitButton";
+import { colors } from "../constants";
 
 interface Props {
   setPostImageUrl: React.Dispatch<React.SetStateAction<string>>;
@@ -55,7 +57,11 @@ const ImagePicker: React.FC<Props> = ({
 
   return (
     <View style={styles.container}>
-      <Button title="Pick an image from camera roll" onPress={pickImage} />
+      <SubmitButton
+        title="Pick an image from camera roll"
+        onPress={pickImage}
+        color={colors.blue}
+      />
     </View>
   );
 };

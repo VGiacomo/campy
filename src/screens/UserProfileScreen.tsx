@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     alignItems: "center",
+    padding: 10,
   },
   button: {
     marginTop: 20,

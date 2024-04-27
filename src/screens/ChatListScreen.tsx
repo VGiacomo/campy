@@ -8,6 +8,7 @@ import { Button, ButtonIcon, ButtonText } from "@gluestack-ui/themed";
 import { SafeAreaView } from "@gluestack-ui/themed";
 import UserCard from "../components/UserCard";
 import { UserData } from "../utils/store/types";
+import { colors } from "../constants";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -39,19 +40,23 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
 
   return (
     <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <Button>
-        {/* <ButtonIcon as={InfoIcon} mr="$2" /> */}
+      {/* <Button>
         <ButtonText>New Chat</ButtonText>
-      </Button>
+      </Button> */}
       <SubmitButton
+        style={{ marginVertical: 10 }}
         onPress={() => navigation.navigate("PrivateChatScreen")}
         title="New Chat"
       />
-      <SubmitButton
+      {/* <SubmitButton
         onPress={() => navigation.navigate("GroupChatScreen")}
         title="New Group"
+      /> */}
+      <SubmitButton
+        onPress={() => auth.signOut()}
+        title="Logout"
+        color={colors.red}
       />
-      <SubmitButton onPress={() => auth.signOut()} title="Logout" />
       <SafeAreaView style={{ flex: 1 }}>
         <FlatList
           data={users}

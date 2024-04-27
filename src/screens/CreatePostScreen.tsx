@@ -82,8 +82,8 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
         </Input>
         <Input style={{ height: 200, marginVertical: 10 }}>
           <InputField
-            style={{ marginVertical: 10 }}
             multiline
+            size="md"
             maxLength={300}
             placeholder="What's on your mind?"
             onChangeText={setPostMessage}
@@ -122,6 +122,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    width: "100%",
   },
   image: {
     width: 200,

@@ -74,8 +74,10 @@ const PostCard: React.FC<PostCardProps> = ({
   return (
     <Card
       // p="$5"
-      borderRadius={3}
-      maxWidth={460}
+      borderRadius={5}
+      shadowOffset={{ width: 0, height: 1 }}
+      shadowColor="$grey300"
+      marginVertical={5}
       //   m="$3"
     >
       <HStack space="md" marginBottom={3}>
@@ -108,6 +110,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <Image
           alt="post image"
           size="lg"
+          width="100%"
           borderRadius={5}
           source={{
             uri: post.imageUrl,
