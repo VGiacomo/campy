@@ -5,9 +5,10 @@ import Input from "../components/Input";
 import { reducer } from "../utils/reducers/formReducer";
 import { validateInput } from "../utils/actions/formActions";
 import { signUp } from "../utils/actions/authActions";
-import { ActivityIndicator, Alert } from "react-native";
+import { ActivityIndicator, Alert, ScrollView } from "react-native";
 import { colors } from "../constants/colors";
 import { useAppDispatch } from "../utils/store";
+import PageContainer from "../components/PageContainer";
 
 const initialState = {
   inputValues: {
@@ -61,71 +62,73 @@ const SignUpScreen = () => {
 
   useEffect(() => {
     if (error) {
-      Alert.alert("An error occurred!", error, [
-        { text: "Okay", onPress: () => setError(undefined) },
-      ]);
+      // Alert.alert("An error occurred!", error, [
+      //   { text: "Okay", onPress: () => setError(undefined) },
+      // ]);
     }
   }, [error]);
 
   return (
-    <>
-      <Input
-        id="firstName"
-        label="First name"
-        icon="user-o"
-        iconPack={FontAwesome}
-        onInputChanged={inputChangedHandler}
-        autoCapitalize="none"
-        errorText={formState.inputValidities["firstName"]}
-      />
-
-      <Input
-        id="lastName"
-        label="Last name"
-        icon="user-o"
-        iconPack={FontAwesome}
-        onInputChanged={inputChangedHandler}
-        autoCapitalize="none"
-        errorText={formState.inputValidities["lastName"]}
-      />
-
-      <Input
-        id="email"
-        label="Email"
-        icon="mail"
-        iconPack={Feather}
-        onInputChanged={inputChangedHandler}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        errorText={formState.inputValidities["email"]}
-      />
-
-      <Input
-        id="password"
-        label="Password"
-        icon="lock"
-        autoCapitalize="none"
-        secureTextEntry
-        iconPack={Feather}
-        onInputChanged={inputChangedHandler}
-        errorText={formState.inputValidities["password"]}
-      />
-
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={colors.primary}
-          style={{ marginTop: 20 }}
+    <PageContainer>
+      <ScrollView>
+        <Input
+          id="firstName"
+          label="First name"
+          icon="user-o"
+          iconPack={FontAwesome}
+          onInputChanged={inputChangedHandler}
+          autoCapitalize="none"
+          errorText={formState.inputValidities["firstName"]}
         />
-      ) : (
-        <SubmitButton
-          title="Sign Up"
-          onPress={authHandler}
-          style={{ marginTop: 20 }}
-          disabled={!formState.formIsValid}
+
+        <Input
+          id="lastName"
+          label="Last name"
+          icon="user-o"
+          iconPack={FontAwesome}
+          onInputChanged={inputChangedHandler}
+          autoCapitalize="none"
+          errorText={formState.inputValidities["lastName"]}
         />
-      )}
-    </>
+
+        <Input
+          id="email"
+          label="Email"
+          icon="mail"
+          iconPack={Feather}
+          onInputChanged={inputChangedHandler}
+          keyboardType="email-address"
+          autoCapitalize="none"
+          errorText={formState.inputValidities["email"]}
+        />
+
+        <Input
+          id="password"
+          label="Password"
+          icon="lock"
+          autoCapitalize="none"
+          secureTextEntry
+          iconPack={Feather}
+          onInputChanged={inputChangedHandler}
+          errorText={formState.inputValidities["password"]}
+        />
+
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={colors.primary}
+            style={{ marginTop: 20 }}
+          />
+        ) : (
+          <SubmitButton
+            title="Sign Up"
+            onPress={authHandler}
+            style={{ marginTop: 20 }}
+            disabled={!formState.formIsValid}
+          />
+        )}
+      </ScrollView>
+    </PageContainer>
   );
 };
 
