@@ -8,14 +8,13 @@ import { getStorage, ref } from "firebase/storage";
 
 // Initialize Firebase
 const firebaseConfig = {
-  apiKey: "AIzaSyAhHUmcSXemUwUVyHtrFcxyu4p--E7KrCo",
-  authDomain: "rn-expo-ts-campy.firebaseapp.com",
-  projectId: "rn-expo-ts-campy",
-  storageBucket: "rn-expo-ts-campy.appspot.com",
-  messagingSenderId: "130664875197",
-  appId: "1:130664875197:web:652618ebfd07fb533463d4",
-  databaseURL:
-    "https://rn-expo-ts-campy-default-rtdb.europe-west1.firebasedatabase.app/",
+  apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.EXPO_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.EXPO_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
+  databaseURL: process.env.EXPO_PUBLIC_FIREBASE_DATABASE_URL,
 };
 
 // Initialize Firebase
