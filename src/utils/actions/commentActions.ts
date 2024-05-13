@@ -86,6 +86,7 @@ export const deleteComment = async (
       });
     }
     if (repliesIds.length > 0) {
+      // TODO
       //   await Promise.all(
       //     postCommentsIds.map((commentId) =>
       //       deleteDoc(doc(dbFirestore, "comments", commentId))

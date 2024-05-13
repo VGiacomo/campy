@@ -21,6 +21,7 @@ import { useNavigation } from "@react-navigation/native";
 import type { CompositeNavigationProp } from "@react-navigation/native";
 import { useAppDispatch } from "../utils/store";
 import { setStatePost } from "../utils/store/postSlice";
+import { deleteComment } from "../utils/actions/commentActions";
 
 type MenuItemProps = {
   item: Post | Comment;
@@ -57,7 +58,7 @@ function MenuButton({ item, loggedInUserId }: MenuItemProps) {
     if (isPost(item)) {
       deletePost(item.id, item.commentsIds);
     } else {
-      console.log(item.postId, "postId");
+      deleteComment(item.id, item.repliesIds, item.postId);
     }
   }
 
@@ -78,16 +79,18 @@ function MenuButton({ item, loggedInUserId }: MenuItemProps) {
         );
       }}
     >
-      <MenuItem
-        key="Edit"
-        textValue="Edit"
-        onPress={() => {
-          handleEdit();
-        }}
-      >
-        <Icon as={EditIcon} size="sm" mr="$2" />
-        <MenuItemLabel size="sm">Edit</MenuItemLabel>
-      </MenuItem>
+      {isPost(item) && (
+        <MenuItem
+          key="Edit"
+          textValue="Edit"
+          onPress={() => {
+            handleEdit();
+          }}
+        >
+          <Icon as={EditIcon} size="sm" mr="$2" />
+          <MenuItemLabel size="sm">Edit</MenuItemLabel>
+        </MenuItem>
+      )}
       {item.authorId === loggedInUserId && (
         <MenuItem
           key="Delete"
