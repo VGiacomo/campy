@@ -114,7 +114,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
       </HStack>
       <Heading>
         <HStack space="md" marginBottom={3} display="flex">
-          {isEditable ? (
+          {currentUserId === comment.authorId && isEditable ? (
             <Input
               variant="outline"
               size="md"
@@ -139,7 +139,7 @@ const CommentCard: React.FC<CommentCardProps> = ({
           ) : (
             <Text style={{ flex: 1 }}>{commentText}</Text> // Display comment text when not editable
           )}
-          {!isEditable && (
+          {currentUserId === comment.authorId && !isEditable && (
             <FontAwesome
               name="edit"
               size={24}
