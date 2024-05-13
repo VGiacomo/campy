@@ -92,6 +92,7 @@ const ProfileImage = (props: Props) => {
         </View>
       ) : (
         <Image
+          alt="profile image"
           style={{
             ...styles.image,
             ...{ width: props.size, height: props.size },

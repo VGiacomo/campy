@@ -38,6 +38,7 @@ const AuthNavigator = () => {
         >
           <View style={styles.imageContainer}>
             <Image
+              alt="app's logo"
               style={styles.image}
               source={require("../../assets/images/logo1.png")}
               resizeMode="contain"
