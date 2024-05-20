@@ -13,21 +13,15 @@ import {
   KeyboardAvoidingView,
   Platform,
   Dimensions,
+  Pressable,
 } from "react-native";
 
 import PageContainer from "../components/PageContainer";
 import { NavigationProp } from "@react-navigation/native";
 import { colors } from "../constants/colors";
 
-const AuthStack = createNativeStackNavigator();
-
-interface RouterProps {
-  navigation: NavigationProp<any, any>;
-}
-
 const AuthNavigator = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-
   return (
     <PageContainer>
       <ScrollView>
@@ -47,14 +41,14 @@ const AuthNavigator = () => {
 
           {isSignUp ? <SignupScreen /> : <LoginScreen />}
 
-          <TouchableOpacity
+          <Pressable
             onPress={() => setIsSignUp((prevState) => !prevState)}
             style={styles.linkContainer}
           >
             <Text style={styles.link}>{`Switch to ${
               isSignUp ? "sign in" : "sign up"
             }`}</Text>
-          </TouchableOpacity>
+          </Pressable>
         </KeyboardAvoidingView>
       </ScrollView>
     </PageContainer>

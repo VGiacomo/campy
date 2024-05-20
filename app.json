@@ -23,6 +23,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "208f4220-6331-4b6b-94f1-6d6762b5b0f6"
+      }
+    },
+    "owner": "giacomoviscido"
   }
 }

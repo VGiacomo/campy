@@ -135,25 +135,23 @@ const PostDetailsScreen = ({ navigation }: RouterProps) => {
       ) : (
         <Text>No post found</Text>
       )}
-      <ScrollView>
-        <SafeAreaView style={styles.container}>
-          {/* <SubmitButton
-          title="Create Post"
-          onPress={() => navigation.navigate("CreatePost")}
-        /> */}
-          {comments ? (
-            <SafeAreaView style={{ flex: 1 }}>
-              <FlatList
-                data={comments}
-                renderItem={renderComments}
-                // keyExtractor={(comment) => comment.id}
-              />
-            </SafeAreaView>
-          ) : (
+      <SafeAreaView style={styles.container}>
+        {/* <SubmitButton
+      title="Create Post"
+      onPress={() => navigation.navigate("CreatePost")}
+    /> */}
+        {comments ? (
+          <FlatList
+            data={comments}
+            renderItem={renderComments}
+            // keyExtractor={(comment) => comment.id}
+          />
+        ) : (
+          <View style={styles.noComments}>
             <Text>No comments yet</Text>
-          )}
-        </SafeAreaView>
-      </ScrollView>
+          </View>
+        )}
+      </SafeAreaView>
       <Input style={{ width: "100%", alignSelf: "center" }}>
         <InputField
           type="text"
@@ -192,5 +190,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+  },
+  noComments: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

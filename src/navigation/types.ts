@@ -3,6 +3,7 @@ import { Seen, Status } from "../utils/store/types";
 export type LoggedInStackParamList = {
   Home: undefined;
   ChatSettings: { chatId: string };
+  ChatList: { selectedUserId?: string };
   Chat: {
     selectedUserId?: string;
     chatId?: string;

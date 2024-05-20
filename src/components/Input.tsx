@@ -53,7 +53,7 @@ const Input = (props: Props) => {
         <TextInput
           style={styles.input}
           onChangeText={onChangeText}
-          value={value}
+          value={value || ""}
           {...props}
         />
       </View>

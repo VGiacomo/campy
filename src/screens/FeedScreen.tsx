@@ -97,21 +97,19 @@ const FeedScreen = ({ navigation }: RouterProps) => {
         </FabLabel>
       </Fab>
 
-      <ScrollView>
-        <View style={styles.container}>
-          {posts.length > 0 ? (
-            <SafeAreaView style={{ flex: 1 }}>
-              <FlatList
-                data={posts}
-                renderItem={renderPosts}
-                keyExtractor={(post) => post.id}
-              />
-            </SafeAreaView>
-          ) : (
+      <SafeAreaView style={styles.container}>
+        {posts.length > 0 ? (
+          <FlatList
+            data={posts}
+            renderItem={renderPosts}
+            keyExtractor={(post) => post.id}
+          />
+        ) : (
+          <View style={styles.noPosts}>
             <Text>No posts yet</Text>
-          )}
-        </View>
-      </ScrollView>
+          </View>
+        )}
+      </SafeAreaView>
     </PageContainer>
   );
 };
@@ -127,6 +125,11 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 20,
     borderRadius: 5,
+  },
+  noPosts: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
