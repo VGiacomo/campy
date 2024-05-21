@@ -18,7 +18,6 @@ import { dbFirestore, getFirebaseApp } from "../../../firebaseConfig";
 import { authenticate, logout } from "../store/authSlice";
 import { ApplicationDispatch } from "../store";
 import { Comment, Post, UserData } from "../store/types";
-import { getDatabase, ref } from "firebase/database";
 
 let timer: NodeJS.Timeout;
 // TODO check these methods (WIP)

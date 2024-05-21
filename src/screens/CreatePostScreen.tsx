@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { NavigationProp } from "@react-navigation/native";
-import { auth, dbFirestore, storage } from "../../firebaseConfig";
+import { auth, dbFirestore } from "../../firebaseConfig";
 import { ref } from "firebase/storage";
 import SubmitButton from "../components/SubmitButton";
 import { Input, InputField } from "@gluestack-ui/themed";
