@@ -11,28 +11,34 @@ import { useRoute } from "@react-navigation/native";
 import {
   collection,
   addDoc,
-  query,
-  orderBy,
+  doc,
+  getDoc,
   onSnapshot,
+  orderBy,
+  query,
+  setDoc,
   serverTimestamp,
-  where,
 } from "firebase/firestore";
 import { dbFirestore, auth } from "../../firebaseConfig";
-import { Message } from "../utils/store/types";
 
-const ChatScreen = () => {
+const ChatScreen = ({ navigation }) => {
   const route = useRoute();
-  const { chatId } = route.params;
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { chatId, chatName } = route.params;
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [title, setTitle] = useState(chatName || "Chat");
 
   useEffect(() => {
+    if (!chatName) {
+      fetchChatTitle();
+    }
+
     const messagesQuery = query(
-      collection(dbFirestore, `messages/${chatId}/messages`),
+      collection(dbFirestore, "messages", chatId, "messages"),
       orderBy("sentAt", "asc")
     );
     const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
-      const messagesList = [] as Message[];
+      const messagesList = [];
       querySnapshot.forEach((doc) => {
         messagesList.push({ ...doc.data(), id: doc.id });
       });
@@ -42,27 +48,87 @@ const ChatScreen = () => {
     return () => unsubscribe();
   }, [chatId]);
 
+  const fetchChatTitle = async () => {
+    const chatDoc = await getDoc(doc(dbFirestore, "chats", chatId));
+    const chatData = chatDoc.data();
+    if (chatData) {
+      const otherUserId = chatData.users.find(
+        (id) => id !== auth.currentUser.uid
+      );
+      const otherUserDoc = await getDoc(doc(dbFirestore, "users", otherUserId));
+      const otherUserData = otherUserDoc.data();
+      if (otherUserData) {
+        const otherUserName = otherUserData.firstLast;
+        setTitle(otherUserName);
+        navigation.setOptions({ title: otherUserName });
+      }
+    }
+  };
+
   const sendMessage = async () => {
     if (newMessage.trim() === "") return;
 
-    await addDoc(collection(dbFirestore, `messages/${chatId}/messages`), {
+    await addDoc(collection(dbFirestore, "messages", chatId, "messages"), {
       text: newMessage,
       sentAt: serverTimestamp(),
       sentBy: auth.currentUser?.uid,
     });
 
     setNewMessage("");
+
+    // Update the latest message in the chat document
+    await setDoc(
+      doc(dbFirestore, "chats", chatId),
+      {
+        latestMessageText: newMessage,
+        updatedAt: serverTimestamp(),
+        updatedBy: auth.currentUser?.uid,
+      },
+      { merge: true }
+    );
+  };
+
+  const formatTimestampToTime = (timestamp) => {
+    if (!timestamp) return "";
+    const date = new Date(
+      timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
+    );
+    const hours = date.getHours().toString().padStart(2, "0");
+    const minutes = date.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+  };
+
+  const renderItem = ({ item }) => {
+    const isCurrentUser = item.sentBy === auth.currentUser.uid;
+    return (
+      <View
+        style={[
+          styles.messageContainer,
+          isCurrentUser
+            ? styles.messageContainerRight
+            : styles.messageContainerLeft,
+        ]}
+      >
+        <View
+          style={[
+            styles.message,
+            isCurrentUser ? styles.messageRight : styles.messageLeft,
+          ]}
+        >
+          <Text>{item.text}</Text>
+          <Text style={styles.timestamp}>
+            {formatTimestampToTime(item.sentAt)}
+          </Text>
+        </View>
+      </View>
+    );
   };
 
   return (
     <View style={styles.container}>
       <FlatList
         data={messages}
-        renderItem={({ item }) => (
-          <View style={styles.message}>
-            <Text>{item.text}</Text>
-          </View>
-        )}
+        renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
       <View style={styles.inputContainer}>
@@ -85,11 +151,34 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
   },
-  message: {
-    padding: 10,
-    backgroundColor: "#f1f1f1",
-    borderRadius: 5,
+  messageContainer: {
+    flexDirection: "row",
     marginVertical: 5,
+  },
+  messageContainerRight: {
+    justifyContent: "flex-end",
+  },
+  messageContainerLeft: {
+    justifyContent: "flex-start",
+  },
+  message: {
+    maxWidth: "70%",
+    padding: 10,
+    borderRadius: 10,
+  },
+  messageRight: {
+    backgroundColor: "#DCF8C6",
+    alignSelf: "flex-end",
+  },
+  messageLeft: {
+    backgroundColor: "#ECECEC",
+    alignSelf: "flex-start",
+  },
+  timestamp: {
+    fontSize: 10,
+    color: "#888",
+    marginTop: 5,
+    textAlign: "right",
   },
   inputContainer: {
     flexDirection: "row",

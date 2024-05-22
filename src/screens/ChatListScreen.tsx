@@ -77,66 +77,27 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
     );
   };
 
-  const createChat = async (user: UserData) => {
+  const createNewChat = async () => {
     if (!currentUser) return;
-
-    // Check if a chat already exists
-    const chatsQuery = query(
-      collection(dbFirestore, "chats"),
-      where("users", "array-contains", currentUser.uid)
-    );
-    const querySnapshot = await getDocs(chatsQuery);
-    let existingChat = null;
-
-    querySnapshot.forEach((doc) => {
-      const chat = doc.data();
-      if (chat.users.includes(user.userId)) {
-        existingChat = { ...chat, chatId: doc.id };
-      }
-    });
-
-    if (existingChat) {
-      navigation.navigate("Chat", {
-        chatId: existingChat.chatId,
-        chatName: existingChat.displayName,
-      });
-    } else {
-      // Create a new chat
-      const newChatRef = doc(collection(dbFirestore, "chats"));
-      await setDoc(newChatRef, {
-        users: [currentUser.uid, user.userId],
-        createdAt: serverTimestamp(),
-        createdBy: currentUser.uid,
-        isGroupChat: false,
-        latestMessageText: "",
-        updatedAt: serverTimestamp(),
-        updatedBy: currentUser.uid,
-      });
-
-      navigation.navigate("Chat", { chatId: newChatRef.id });
-    }
+    navigation.navigate("NewChat");
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-      <SubmitButton
-        style={{ marginVertical: 10 }}
-        onPress={() => navigation.navigate("PrivateChatScreen")}
-        title="New Chat"
-      />
-      <SubmitButton
-        onPress={() => auth.signOut()}
-        title="Logout"
-        color={colors.red}
-      />
-      <SafeAreaView style={{ flex: 1 }}>
-        <FlatList
-          data={users}
-          renderItem={({ item }) => (
-            <UserCard user={item} onPress={() => createChat(item)} />
-          )}
-          keyExtractor={(item) => item.userId}
+    <View style={{ justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flexDirection: "row" }}>
+        <SubmitButton
+          style={{ margin: 10 }}
+          onPress={() => createNewChat()}
+          title="New Chat"
         />
+        <SubmitButton
+          style={{ margin: 10 }}
+          onPress={() => auth.signOut()}
+          title="Logout"
+          color={colors.red}
+        />
+      </View>
+      <SafeAreaView style={{ flex: 1 }}>
         <Text style={styles.header}>Chats</Text>
         <FlatList
           data={chats}

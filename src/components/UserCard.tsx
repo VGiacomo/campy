@@ -23,6 +23,7 @@ const UserCard = ({ user, onPress }: UserCardProps) => {
           <Avatar>
             <AvatarFallbackText>{user.firstLast}</AvatarFallbackText>
             <AvatarImage
+              alt="Avatar image"
               source={{
                 uri: user.profilePicture,
               }}
