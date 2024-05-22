@@ -25,6 +25,8 @@ import { AddIcon, Fab, FabIcon, FabLabel } from "@gluestack-ui/themed";
 import PageContainer from "../components/PageContainer";
 import { Post } from "../utils/store/types";
 import { SafeAreaView } from "@gluestack-ui/themed";
+import { useAppDispatch } from "../utils/store";
+import { setStatePost } from "../utils/store/postSlice";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -32,7 +34,7 @@ interface RouterProps {
 
 const FeedScreen = ({ navigation }: RouterProps) => {
   const [posts, setPosts] = useState<Post[]>([]);
-
+  const dispatch = useAppDispatch();
   useEffect(() => {
     const postRef = collection(dbFirestore, "posts");
 
@@ -81,6 +83,11 @@ const FeedScreen = ({ navigation }: RouterProps) => {
     );
   };
 
+  const goToCreatePost = () => {
+    dispatch(setStatePost({}));
+    navigation.navigate("CreatePost");
+  };
+
   return (
     <PageContainer>
       <Fab
@@ -89,7 +96,7 @@ const FeedScreen = ({ navigation }: RouterProps) => {
         isHovered={false}
         isDisabled={false}
         isPressed={false}
-        onPress={() => navigation.navigate("CreatePost")}
+        onPress={() => goToCreatePost()}
       >
         <FabIcon as={AddIcon} mr="$1" />
         <FabLabel>
