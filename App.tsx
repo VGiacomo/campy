@@ -1,6 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet } from "react-native";
 import AuthNavigator from "./src/navigation/AuthNavigator";
 import { store } from "./src/utils/store";
 import { Provider } from "react-redux";

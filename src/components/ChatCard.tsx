@@ -8,39 +8,49 @@ import {
   Pressable,
 } from "@gluestack-ui/themed";
 import React from "react";
-import { UserData } from "../utils/store/types";
+import { ChatData } from "../utils/store/types";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { getTimeAgoOrTime } from "../utils/helperFns";
 
 // add a prop type here
-interface UserCardProps {
-  user: UserData;
+interface ChatCardProps {
+  chat: {
+    id: string;
+    firstLast: string;
+    displayName: string;
+    chatImage: string;
+    latestMessageText: string;
+    updatedAt: string;
+  };
   onPress: () => void;
 }
-const UserCard = ({ user, onPress }: UserCardProps) => {
+
+const ChatCard = ({ chat, onPress }: ChatCardProps) => {
   return (
     <Pressable style={styles.card} onPress={onPress}>
       <VStack style={styles.container} space="2xl">
         <HStack space="md">
           <Avatar>
-            <AvatarFallbackText>{user.firstLast}</AvatarFallbackText>
+            <AvatarFallbackText>{chat.displayName}</AvatarFallbackText>
             <AvatarImage
               alt="Avatar image"
               source={{
-                uri: user.profilePicture,
+                uri: chat.chatImage,
               }}
             />
           </Avatar>
           <VStack>
-            <Heading size="sm">{user.firstLast}</Heading>
-            {/* <Text size="sm">Nursing Assistant</Text> */}
+            <Heading size="sm">{chat.displayName}</Heading>
+            <Text size="sm">{chat.latestMessageText}</Text>
           </VStack>
+          <Text>{getTimeAgoOrTime(chat.updatedAt.toString())}</Text>
         </HStack>
       </VStack>
     </Pressable>
   );
 };
 
-export default UserCard;
+export default ChatCard;
 
 const styles = StyleSheet.create({
   container: {
@@ -60,7 +70,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f9f9f9",
     borderRadius: 5,
   },
-  username: {
+  chatname: {
     fontSize: 16,
     fontWeight: "bold",
   },

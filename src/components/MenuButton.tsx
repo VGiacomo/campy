@@ -1,4 +1,4 @@
-import { CloseIcon, ThreeDotsIcon } from "@gluestack-ui/themed";
+import { CloseIcon, Pressable, ThreeDotsIcon } from "@gluestack-ui/themed";
 import {
   Menu,
   MenuItem,
@@ -68,14 +68,14 @@ function MenuButton({ item, loggedInUserId }: MenuItemProps) {
       placement="bottom right"
       trigger={({ ...triggerProps }) => {
         return (
-          <Button {...triggerProps} style={{ backgroundColor: "white" }}>
+          <Pressable {...triggerProps} style={{ backgroundColor: "white" }}>
             <Icon
               style={{ transform: [{ rotate: "90deg" }] }}
               as={ThreeDotsIcon}
               size="sm"
               mr="$2"
             />
-          </Button>
+          </Pressable>
         );
       }}
     >

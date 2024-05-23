@@ -20,6 +20,7 @@ import {
 import { updateLoggedInUserData } from "../utils/store/authSlice";
 import { colors } from "../constants";
 import { ImageType } from "../utils/store/types";
+import { Pressable } from "@gluestack-ui/themed";
 // import { updateChatData } from "../utils/actions/chatActions";
 
 type Props = {
@@ -80,7 +81,7 @@ const ProfileImage = (props: Props) => {
   };
 
   return (
-    <TouchableOpacity onPress={pickImage}>
+    <Pressable onPress={pickImage}>
       {isLoading ? (
         <View
           style={{
@@ -104,7 +105,7 @@ const ProfileImage = (props: Props) => {
       <View style={styles.editIconContainer}>
         <FontAwesome name="pencil" size={15} color="black" />
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

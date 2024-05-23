@@ -7,7 +7,7 @@ import {
   Button,
   StyleSheet,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { NavigationProp, useRoute } from "@react-navigation/native";
 import {
   collection,
   addDoc,
@@ -20,16 +20,27 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { dbFirestore, auth } from "../../firebaseConfig";
+import { Pressable } from "@gluestack-ui/themed";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { colors } from "../constants";
+import { getTimeAgoOrTime } from "../utils/helperFns";
 
-const ChatScreen = ({ navigation }) => {
+interface RouterProps {
+  navigation: NavigationProp<any, any>;
+}
+
+const ChatScreen = ({ navigation }: RouterProps) => {
   const route = useRoute();
-  const { chatId, chatName } = route.params;
+  const { chatId, chatName } = route.params as {
+    chatId: string;
+    chatName?: string;
+  };
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [title, setTitle] = useState(chatName || "Chat");
-
+  const currentUser = auth.currentUser;
   useEffect(() => {
-    if (!chatName) {
+    if (!chatName && currentUser) {
       fetchChatTitle();
     }
 
@@ -49,11 +60,12 @@ const ChatScreen = ({ navigation }) => {
   }, [chatId]);
 
   const fetchChatTitle = async () => {
+    console.log(chatName, "fetchChatTitle");
     const chatDoc = await getDoc(doc(dbFirestore, "chats", chatId));
     const chatData = chatDoc.data();
     if (chatData) {
       const otherUserId = chatData.users.find(
-        (id) => id !== auth.currentUser.uid
+        (id: string) => id !== currentUser!.uid
       );
       const otherUserDoc = await getDoc(doc(dbFirestore, "users", otherUserId));
       const otherUserData = otherUserDoc.data();
@@ -70,7 +82,7 @@ const ChatScreen = ({ navigation }) => {
 
     await addDoc(collection(dbFirestore, "messages", chatId, "messages"), {
       text: newMessage,
-      sentAt: serverTimestamp(),
+      sentAt: new Date().toISOString(),
       sentBy: auth.currentUser?.uid,
     });
 
@@ -81,7 +93,7 @@ const ChatScreen = ({ navigation }) => {
       doc(dbFirestore, "chats", chatId),
       {
         latestMessageText: newMessage,
-        updatedAt: serverTimestamp(),
+        updatedAt: new Date().toISOString(),
         updatedBy: auth.currentUser?.uid,
       },
       { merge: true }
@@ -99,7 +111,8 @@ const ChatScreen = ({ navigation }) => {
   };
 
   const renderItem = ({ item }) => {
-    const isCurrentUser = item.sentBy === auth.currentUser.uid;
+    const isCurrentUser = item.sentBy === currentUser!.uid;
+    console.log(item.sentAt, "item *********");
     return (
       <View
         style={[
@@ -117,7 +130,7 @@ const ChatScreen = ({ navigation }) => {
         >
           <Text>{item.text}</Text>
           <Text style={styles.timestamp}>
-            {formatTimestampToTime(item.sentAt)}
+            {getTimeAgoOrTime(item.sentAt.toString())}
           </Text>
         </View>
       </View>
@@ -138,7 +151,9 @@ const ChatScreen = ({ navigation }) => {
           onChangeText={setNewMessage}
           placeholder="Type a message"
         />
-        <Button title="Send" onPress={sendMessage} />
+        <Pressable style={styles.sendButton} onPress={sendMessage}>
+          <MaterialCommunityIcons name="send" size={24} color="black" />
+        </Pressable>
       </View>
     </View>
   );
@@ -147,6 +162,11 @@ const ChatScreen = ({ navigation }) => {
 export default ChatScreen;
 
 const styles = StyleSheet.create({
+  sendButton: {
+    padding: 10,
+    backgroundColor: colors.primary,
+    borderRadius: 10,
+  },
   container: {
     flex: 1,
     padding: 10,

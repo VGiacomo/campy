@@ -11,12 +11,14 @@ import {
   query,
   where,
   getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import SubmitButton from "../components/SubmitButton";
 import { SafeAreaView } from "@gluestack-ui/themed";
-import UserCard from "../components/UserCard";
-import { UserData } from "../utils/store/types";
+import ChatCard from "../components/ChatCard";
+import { ChatData, UserData } from "../utils/store/types";
 import { colors } from "../constants";
+import UserCard from "../components/UserCard";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -30,6 +32,56 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
   useEffect(() => {
     fetchUsers();
     fetchChats();
+
+    // const chatRef = collection(dbFirestore, "chats");
+
+    // const subscriber = onSnapshot(chatRef, {
+    //   next: async (snapshot) => {
+    //     const chats: ChatData[] = [];
+    //     snapshot.docs.forEach((doc) => {
+    //       chats.push({
+    //         users: doc.data().users,
+    //         usersImages: doc.data().usersImages,
+    //         usersNames: doc.data().usersNames,
+    //         createdAt: doc.data().createdAt,
+    //         createdBy: doc.data().createdBy,
+    //         chatId: doc.id,
+    //         latestMessageText: doc.data().latestMessageText,
+    //         updatedAt: doc.data().updatedAt,
+    //         updatedBy: doc.data().updatedBy,
+    //       });
+    //     });
+    //     chats.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+    //     chats.filter((chat) => chat.users.includes(currentUser!.uid));
+    //     const otherUsersInChatsData: any = {};
+    //     for (const chat of chats) {
+    //       for (const userId of chat.users) {
+    //         if (userId !== currentUser?.uid && !otherUsersInChatsData[userId]) {
+    //           const userDoc = await getDoc(doc(dbFirestore, "users", userId));
+    //           otherUsersInChatsData[userId] = userDoc.data();
+    //         }
+    //       }
+    //     }
+    //     setChats(
+    //       chats.map((chat) => ({
+    //         ...chat,
+    //         chatImage:
+    //           currentUser &&
+    //           otherUsersInChatsData[
+    //             chat.users.find((userId: string) => userId !== currentUser.uid)!
+    //           ]?.profilePicture,
+    //         displayName:
+    //           currentUser &&
+    //           otherUsersInChatsData[
+    //             chat.users.find((userId: string) => userId !== currentUser.uid)!
+    //           ]?.firstLast,
+    //       }))
+    //     );
+    //   },
+    // });
+
+    // // // Unsubscribe from events when no longer in use
+    // return () => subscriber();
   }, []);
 
   const fetchUsers = async () => {
@@ -51,14 +103,13 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
     );
     const querySnapshot = await getDocs(chatsQuery);
     const chatsData: any[] = [];
-    const userDocs: any = {};
-
-    for (const doc of querySnapshot.docs) {
-      const chat = { ...doc.data(), chatId: doc.id };
+    const otherUsersInChatsData: any = {};
+    for (const qsDoc of querySnapshot.docs) {
+      const chat = { ...qsDoc.data(), chatId: qsDoc.id };
       for (const userId of chat.users) {
-        if (userId !== currentUser.uid && !userDocs[userId]) {
+        if (userId !== currentUser.uid && !otherUsersInChatsData[userId]) {
           const userDoc = await getDoc(doc(dbFirestore, "users", userId));
-          userDocs[userId] = userDoc.data();
+          otherUsersInChatsData[userId] = userDoc.data();
         }
       }
       chatsData.push(chat);
@@ -67,16 +118,19 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
     setChats(
       chatsData.map((chat) => ({
         ...chat,
-        displayName:
-          chat.chatName !== ""
-            ? chat.chatName
-            : userDocs[
-                chat.users.find((userId: string) => userId !== currentUser.uid)
-              ]?.firstLast,
+        chatImage: chat.chatImage
+          ? chat.chatImage
+          : otherUsersInChatsData[
+              chat.users.find((userId: string) => userId !== currentUser.uid)
+            ]?.profilePicture,
+        displayName: chat.chatName
+          ? chat.chatName
+          : otherUsersInChatsData[
+              chat.users.find((userId: string) => userId !== currentUser.uid)
+            ]?.firstLast,
       }))
     );
   };
-
   const createNewChat = async () => {
     if (!currentUser) return;
     navigation.navigate("NewChat");
@@ -102,16 +156,15 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
         <FlatList
           data={chats}
           renderItem={({ item }) => (
-            <Text
+            <ChatCard
+              chat={item}
               onPress={() =>
                 navigation.navigate("Chat", {
                   chatId: item.chatId,
                   chatName: item.displayName,
                 })
               }
-            >
-              {item.displayName}
-            </Text>
+            />
           )}
           keyExtractor={(item) => item.chatId}
         />
