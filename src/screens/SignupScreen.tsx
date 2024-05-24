@@ -97,7 +97,7 @@ const SignUpScreen = () => {
           icon="mail"
           iconPack={Feather}
           onInputChanged={inputChangedHandler}
-          keyboardType="email-address"
+          inputMode="email"
           autoCapitalize="none"
           errorText={formState.inputValidities["email"]}
         />

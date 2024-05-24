@@ -19,6 +19,7 @@ import ChatCard from "../components/ChatCard";
 import { ChatData, UserData } from "../utils/store/types";
 import { colors } from "../constants";
 import UserCard from "../components/UserCard";
+import PageContainer from "../components/PageContainer";
 
 interface RouterProps {
   navigation: NavigationProp<any, any>;
@@ -137,7 +138,7 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
   };
 
   return (
-    <View style={{ justifyContent: "center", alignItems: "center" }}>
+    <PageContainer>
       <View style={{ flexDirection: "row" }}>
         <SubmitButton
           style={{ margin: 10 }}
@@ -151,7 +152,7 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
           color={colors.red}
         />
       </View>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={styles.container}>
         <Text style={styles.header}>Chats</Text>
         <FlatList
           data={chats}
@@ -159,7 +160,7 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
             <ChatCard
               chat={item}
               onPress={() =>
-                navigation.navigate("Chat", {
+                navigation.navigate("PrivateChat", {
                   chatId: item.chatId,
                   chatName: item.displayName,
                 })
@@ -169,13 +170,17 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
           keyExtractor={(item) => item.chatId}
         />
       </SafeAreaView>
-    </View>
+    </PageContainer>
   );
 };
 
 export default ChatListScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
   header: {
     fontSize: 18,
     fontWeight: "bold",

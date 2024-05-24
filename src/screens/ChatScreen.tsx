@@ -83,7 +83,7 @@ const ChatScreen = ({ navigation }: RouterProps) => {
     await addDoc(collection(dbFirestore, "messages", chatId, "messages"), {
       text: newMessage,
       sentAt: new Date().toISOString(),
-      sentBy: auth.currentUser?.uid,
+      sentBy: currentUser?.uid,
     });
 
     setNewMessage("");
@@ -94,13 +94,13 @@ const ChatScreen = ({ navigation }: RouterProps) => {
       {
         latestMessageText: newMessage,
         updatedAt: new Date().toISOString(),
-        updatedBy: auth.currentUser?.uid,
+        updatedBy: currentUser?.uid,
       },
       { merge: true }
     );
   };
 
-  const formatTimestampToTime = (timestamp) => {
+  const formatTimestampToTime = (timestamp: any) => {
     if (!timestamp) return "";
     const date = new Date(
       timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
@@ -152,7 +152,12 @@ const ChatScreen = ({ navigation }: RouterProps) => {
           placeholder="Type a message"
         />
         <Pressable style={styles.sendButton} onPress={sendMessage}>
-          <MaterialCommunityIcons name="send" size={24} color="black" />
+          <MaterialCommunityIcons
+            name="send"
+            aria-label="Send"
+            size={24}
+            color="black"
+          />
         </Pressable>
       </View>
     </View>

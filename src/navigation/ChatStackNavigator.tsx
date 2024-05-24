@@ -15,7 +15,7 @@ export default function ChatStackNavigator() {
         options={{ title: "Chats" }}
       />
       <ChatStack.Screen
-        name="Chat"
+        name="PrivateChat"
         component={ChatScreen}
         options={({ route }) => ({
           title: route.params?.chatName || "Chat",

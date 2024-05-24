@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, Image, StyleSheet, Text, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 
 const userImage = require("../../assets/images/userImage.jpeg");

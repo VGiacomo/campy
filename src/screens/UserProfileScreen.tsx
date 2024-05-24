@@ -156,7 +156,7 @@ const UserProfileScreen = () => {
           icon="mail"
           iconPack={Feather}
           onInputChanged={inputChangedHandler}
-          keyboardType="email-address"
+          inputMode="email"
           autoCapitalize="none"
           errorText={formState.inputValidities["email"]}
           initialValue={userData?.email}
@@ -199,6 +199,7 @@ const UserProfileScreen = () => {
               <Checkbox
                 value={option}
                 key={option}
+                aria-label={`Select ${option}`} // Adding accessibility label
                 onPress={() => {
                   handleSelectLanguages(option);
                 }}

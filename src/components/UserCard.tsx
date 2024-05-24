@@ -9,7 +9,7 @@ import {
 } from "@gluestack-ui/themed";
 import React from "react";
 import { UserData } from "../utils/store/types";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 // add a prop type here
 interface UserCardProps {

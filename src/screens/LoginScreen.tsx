@@ -71,7 +71,7 @@ const SignInForm = () => {
         icon="mail"
         iconPack={Feather}
         autoCapitalize="none"
-        keyboardType="email-address"
+        inputMode="email"
         onInputChanged={inputChangedHandler}
         errorText={formState.inputValidities["email"]}
       />

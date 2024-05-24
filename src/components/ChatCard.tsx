@@ -9,7 +9,7 @@ import {
 } from "@gluestack-ui/themed";
 import React from "react";
 import { ChatData } from "../utils/store/types";
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { getTimeAgoOrTime } from "../utils/helperFns";
 
 // add a prop type here
@@ -40,8 +40,8 @@ const ChatCard = ({ chat, onPress }: ChatCardProps) => {
             />
           </Avatar>
           <VStack>
-            <Heading size="sm">{chat.displayName}</Heading>
-            <Text size="sm">{chat.latestMessageText}</Text>
+            <Heading size="md">{chat.displayName}</Heading>
+            <Text>{chat.latestMessageText}</Text>
           </VStack>
           <Text>{getTimeAgoOrTime(chat.updatedAt.toString())}</Text>
         </HStack>

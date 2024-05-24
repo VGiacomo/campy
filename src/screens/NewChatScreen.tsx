@@ -100,7 +100,7 @@ const NewChatScreen = ({ navigation }: RouterProps) => {
 
     //   navigation.navigate("Chat", { chatId: newChatRef.id });
     // }
-    navigation.navigate("Chat", { chatId: newChatId });
+    navigation.navigate("PrivateChat", { chatId: newChatId });
   };
   return (
     <PageContainer>

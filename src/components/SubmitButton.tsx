@@ -1,6 +1,7 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, Text, ViewStyle } from "react-native";
+import { StyleSheet, Text, ViewStyle } from "react-native";
 import { colors } from "../constants/colors";
+import { Pressable } from "@gluestack-ui/themed";
 
 type Props = {
   title: string;
@@ -16,7 +17,7 @@ const SubmitButton = (props: Props) => {
   const bgColor = props.disabled ? disabledBgColor : enabledBgColor;
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={props.disabled ? () => {} : props.onPress}
       style={{
         ...styles.button,
@@ -27,7 +28,7 @@ const SubmitButton = (props: Props) => {
       <Text style={{ color: props.disabled ? colors.gray : "white" }}>
         {props.title}
       </Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
