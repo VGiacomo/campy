@@ -70,7 +70,7 @@ export const createChat = async (
 
 export const getUserChats = async (userId: string) => {
   try {
-    const docRef = doc(dbFirestore, `userChats/${userId}/chats`);
+    const docRef = doc(dbFirestore, `userChats/${userId}`);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {

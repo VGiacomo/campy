@@ -10,6 +10,16 @@ import { colors } from "../constants/colors";
 import { useAppDispatch } from "../utils/store";
 import PageContainer from "../components/PageContainer";
 
+import {
+  Button,
+  FormControl,
+  Toast,
+  ToastDescription,
+  ToastTitle,
+  VStack,
+  useToast,
+} from "@gluestack-ui/themed";
+
 const initialState = {
   inputValues: {
     firstName: "",
@@ -30,6 +40,7 @@ const SignUpScreen = () => {
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
   const [error, setError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const toast = useToast();
 
   const dispatch = useAppDispatch();
 
@@ -40,6 +51,35 @@ const SignUpScreen = () => {
     },
     [dispatchFormState]
   );
+
+  const showToast = (variant: "success" | "error") => {
+    const duration = "2000";
+    const messageToDisplay =
+      variant === "success"
+        ? {
+            title: "Great, you are signed-up! Welcome",
+            description: "Live the outdoor life",
+          }
+        : { title: "Sign-up failed", description: "Please try again" };
+
+    toast.show({
+      placement: "top",
+      duration: parseInt(duration),
+      render: ({ id }) => {
+        const toastId = "toast-" + id;
+        return (
+          <Toast nativeID={toastId} action={variant} variant="accent">
+            <VStack space="xs" flex={1}>
+              <ToastTitle>{messageToDisplay.title}</ToastTitle>
+              <ToastDescription>
+                {messageToDisplay.description}
+              </ToastDescription>
+            </VStack>
+          </Toast>
+        );
+      },
+    });
+  };
 
   const authHandler = async () => {
     try {
@@ -54,9 +94,11 @@ const SignUpScreen = () => {
       });
       await dispatch(action);
       setLoading(false);
+      showToast("success");
     } catch (err: any) {
       setError(err.message);
       setLoading(false);
+      showToast("error");
     }
   };
 

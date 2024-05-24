@@ -9,6 +9,15 @@ import { useAppDispatch } from "../utils/store";
 import { ActivityIndicator, Alert } from "react-native";
 import { colors } from "../constants/colors";
 import PageContainer from "../components/PageContainer";
+import {
+  Button,
+  FormControl,
+  Toast,
+  ToastDescription,
+  ToastTitle,
+  VStack,
+  useToast,
+} from "@gluestack-ui/themed";
 
 const initialState = {
   inputValues: {
@@ -26,6 +35,7 @@ const SignInForm = () => {
   const [formState, dispatchFormState] = useReducer(reducer, initialState);
   const [error, setError] = useState<string | undefined>(undefined);
   const [loading, setLoading] = useState<boolean>(false);
+  const toast = useToast();
 
   const dispatch = useAppDispatch();
 
@@ -45,6 +55,32 @@ const SignInForm = () => {
     }
   }, [error]);
 
+  const showToast = () => {
+    const duration = "1500";
+    const messageToDisplay = {
+      title: "Login failed",
+      description: "Please try again",
+    };
+
+    toast.show({
+      placement: "top",
+      duration: parseInt(duration),
+      render: ({ id }) => {
+        const toastId = "toast-" + id;
+        return (
+          <Toast nativeID={toastId} action={"error"} variant="accent">
+            <VStack space="xs" flex={1}>
+              <ToastTitle>{messageToDisplay.title}</ToastTitle>
+              <ToastDescription>
+                {messageToDisplay.description}
+              </ToastDescription>
+            </VStack>
+          </Toast>
+        );
+      },
+    });
+  };
+
   const authHandler = useCallback(async () => {
     try {
       setLoading(true);
@@ -58,50 +94,53 @@ const SignInForm = () => {
       await dispatch(action);
       setLoading(false);
     } catch (error: any) {
+      showToast();
       setError(error.message);
       setLoading(false);
     }
   }, [dispatch, formState]);
 
   return (
-    <>
-      <Input
-        id="email"
-        label="Email"
-        icon="mail"
-        iconPack={Feather}
-        autoCapitalize="none"
-        inputMode="email"
-        onInputChanged={inputChangedHandler}
-        errorText={formState.inputValidities["email"]}
-      />
-
-      <Input
-        id="password"
-        label="Password"
-        icon="lock"
-        iconPack={Feather}
-        autoCapitalize="none"
-        secureTextEntry
-        onInputChanged={inputChangedHandler}
-        errorText={formState.inputValidities["password"]}
-      />
-
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={colors.primary}
-          style={{ marginTop: 20 }}
+    <PageContainer>
+      <FormControl>
+        <Input
+          id="email"
+          label="Email"
+          icon="mail"
+          iconPack={Feather}
+          autoCapitalize="none"
+          inputMode="email"
+          onInputChanged={inputChangedHandler}
+          errorText={formState.inputValidities["email"]}
         />
-      ) : (
-        <SubmitButton
-          title="Sign In"
-          onPress={authHandler}
-          style={{ marginTop: 20 }}
-          disabled={!formState.formIsValid}
+
+        <Input
+          id="password"
+          label="Password"
+          icon="lock"
+          iconPack={Feather}
+          autoCapitalize="none"
+          secureTextEntry
+          onInputChanged={inputChangedHandler}
+          errorText={formState.inputValidities["password"]}
         />
-      )}
-    </>
+
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={colors.primary}
+            style={{ marginTop: 20 }}
+          />
+        ) : (
+          <SubmitButton
+            title="Sign In"
+            onPress={authHandler}
+            style={{ marginTop: 20 }}
+            disabled={!formState.formIsValid}
+          />
+        )}
+      </FormControl>
+    </PageContainer>
   );
 };
 
