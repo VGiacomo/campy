@@ -1,14 +1,21 @@
 import * as ImagePicker from "expo-image-picker";
 import { Platform } from "react-native";
-import { getFirebaseApp } from "../../firebaseConfig";
+import {
+  auth,
+  dbFirestore,
+  getFirebaseApp,
+  storage,
+} from "../../firebaseConfig";
 import uuid from "react-native-uuid";
 import {
+  deleteObject,
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
 import { ImageType } from "./store/types";
+import { doc, getDoc, getFirestore, updateDoc } from "firebase/firestore";
 
 export const launchImagePicker = async () => {
   await checkMediaPermissions();
@@ -47,8 +54,6 @@ export const openCamera = async () => {
 };
 
 export const uploadImageAsync = async (uri: string, imageType: ImageType) => {
-  const app = getFirebaseApp();
-
   const blob: any = await new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.onload = function () {
@@ -80,19 +85,49 @@ export const uploadImageAsync = async (uri: string, imageType: ImageType) => {
       pathFolder = ImageType.ProfileImage;
       break;
     default:
-      // pathFolder = ImageType.ProfileImage; // Default to profileImages if not specified
       pathFolder = "";
   }
   if (!pathFolder) {
     throw new Error("Invalid image type specified");
   }
-  const storageRef = ref(getStorage(app), `${pathFolder}/${uuid.v4()}`);
 
+  // Handle profile image specific logic
+  if (imageType === ImageType.ProfileImage) {
+    // Fetch the current user profile document
+    const userDocRef = doc(dbFirestore, "users", auth.currentUser!.uid);
+    const userDoc = await getDoc(userDocRef);
+
+    if (userDoc.exists()) {
+      const userData = userDoc.data();
+      const currentProfileImageUrl = userData.profilePicture;
+
+      if (currentProfileImageUrl) {
+        // Extract the file path from the URL
+        const filePath = currentProfileImageUrl.split("/o/")[1].split("?")[0];
+
+        // Create a reference to the file to delete
+        const oldProfileImageRef = ref(storage, decodeURIComponent(filePath));
+
+        // Delete the old profile image
+        await deleteObject(oldProfileImageRef);
+      }
+    }
+  }
+
+  // Upload the new image
+  const storageRef = ref(storage, `${pathFolder}/${uuid.v4()}`);
   await uploadBytesResumable(storageRef, blob);
 
-  // blob.close();
+  const downloadURL = await getDownloadURL(storageRef);
 
-  return await getDownloadURL(storageRef);
+  // If it's a profile image, update the user's profile document with the new image URL
+  if (imageType === ImageType.ProfileImage) {
+    await updateDoc(doc(dbFirestore, "users", auth.currentUser!.uid), {
+      profilePicture: downloadURL,
+    });
+  }
+
+  return downloadURL;
 };
 
 const checkMediaPermissions = async () => {
