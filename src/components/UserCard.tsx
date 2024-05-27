@@ -25,9 +25,7 @@ const UserCard = ({ user, onPress }: UserCardProps) => {
             <AvatarFallbackText>{user.firstLast}</AvatarFallbackText>
             <AvatarImage
               alt="Avatar image"
-              source={{
-                uri: user.profilePicture,
-              }}
+              source={user.profilePicture ? user.profilePicture : ""}
             />
           </Avatar>
           <VStack>
