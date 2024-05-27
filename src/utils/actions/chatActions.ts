@@ -39,6 +39,7 @@ export const createChat = async (
     ...chatData,
     createdBy: loggedInUserId,
     updatedBy: loggedInUserId,
+    latestMessageText: "",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

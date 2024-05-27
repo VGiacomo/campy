@@ -4,6 +4,7 @@ import { UserData } from "../utils/store/types";
 import {
   collection,
   doc,
+  getDoc,
   getDocs,
   query,
   serverTimestamp,
@@ -40,6 +41,43 @@ const NewChatScreen = ({ navigation }: RouterProps) => {
   //     getUserChats(userId).then((chats) => {});
   //   };
 
+  // const fetchFilteredUsers = async () => {
+  //   if (!currentUser) return [];
+
+  //   const currentUserId = currentUser.uid;
+
+  //   // Step 1: Fetch current user's chat IDs
+  //   const userChatsSnapshot = await getDoc(
+  //     doc(dbFirestore, "userChats", currentUserId)
+  //   );
+  //   const currentUserChats = userChatsSnapshot.data() || {};
+  //   const currentUserChatIds = new Set(Object.values(currentUserChats));
+  //   console.log(currentUserChatIds);
+
+  //   // Step 2: Fetch all users and their chat IDs
+  //   const allUsersSnapshot = await getDocs(
+  //     collection(dbFirestore, "userChats")
+  //   );
+  //   const allUsers: { userId: string; userChatIds: Set<string> }[] = [];
+  //   allUsersSnapshot.forEach((doc) => {
+  //     const userId = doc.id;
+  //     const userChats = doc.data() || {};
+  //     const userChatIds = new Set(Object.values(userChats));
+  //     allUsers.push({ userId, userChatIds });
+  //   });
+
+  //   // Step 3: Filter out users who share any chat ID with the current user
+  //   const filteredUsers = allUsers.filter((user) => {
+  //     if (user.userId === currentUserId) return false; // Exclude the current user
+  //     const hasCommonChat = [...user.userChatIds].some((chatId) =>
+  //       currentUserChatIds.has(chatId)
+  //     );
+  //     return !hasCommonChat;
+  //   });
+
+  //   return filteredUsers.map((user) => user.userId);
+  // };
+
   const fetchUsers = async () => {
     const querySnapshot = await getDocs(collection(dbFirestore, "users"));
     const usersData: UserData[] = [];
@@ -47,66 +85,80 @@ const NewChatScreen = ({ navigation }: RouterProps) => {
       if (doc.id === currentUser?.uid) return;
       usersData.push({ ...doc.data(), userId: doc.id } as UserData);
     });
-    // filter the users
+    // filter the users that are not already in a chat with the currentUser
+    // const filteredUsers = await fetchFilteredUsers();
+    // fetchFilteredUsers().then((filteredUsers) => {
+    //   console.log("Filtered Users:", filteredUsers);
+    // });
+    // setUsers(
+    //   usersData.map(
+    //     (userId) => usersData.find((user) => user.userId === userId)!
+    //   )
+    // );
     setUsers(usersData);
   };
 
   const createNewChat = async (user: UserData) => {
     if (!currentUser) return;
     console.log(userData, "userData");
-    const newChatId = await createChat(currentUser.uid, {
-      users: [currentUser.uid, user.userId],
-      userNames: [userData.firstLast, user.firstLast],
+
+    // Check if a chat already exists
+    const chatsQuery = query(
+      collection(dbFirestore, "chats"),
+      where("users", "array-contains", currentUser.uid)
+    );
+    const querySnapshot = await getDocs(chatsQuery);
+    let existingChat = null;
+
+    querySnapshot.forEach((doc) => {
+      const chat = doc.data();
+      if (chat.users.includes(user.userId)) {
+        existingChat = { ...chat, chatId: doc.id };
+      }
+    });
+    console.log(existingChat, "existingChat");
+
+    if (existingChat) {
+      navigation.navigate("PrivateChat", {
+        chatId: existingChat.chatId,
+        chatName: existingChat.displayName,
+      });
+    } else {
+      console.log("Creating new chat");
+      const newChatId = await createChat(currentUser.uid, {
+        users: [currentUser.uid, user.userId],
+        userNames: [userData.firstLast, user.firstLast],
+        //   createdAt: serverTimestamp(),
+        //   createdBy: currentUser.uid,
+        isGroupChat: false,
+        //   latestMessageText: "",
+        //   updatedAt: serverTimestamp(),
+        //   updatedBy: currentUser.uid,
+      });
+
+      // // Create a new chat
+      // const newChatRef = doc(collection(dbFirestore, "chats"));
+      // await setDoc(newChatRef, {
+      //   users: [currentUser.uid, user.userId],
+      //   usersNames: [currentUser.firstLast, user.firstLast],
       //   createdAt: serverTimestamp(),
       //   createdBy: currentUser.uid,
-      isGroupChat: false,
+      //   isGroupChat: false,
       //   latestMessageText: "",
       //   updatedAt: serverTimestamp(),
       //   updatedBy: currentUser.uid,
-    });
-    // Check if a chat already exists
-    // const chatsQuery = query(
-    //   collection(dbFirestore, "chats"),
-    //   where("users", "array-contains", currentUser.uid)
-    // );
-    // const querySnapshot = await getDocs(chatsQuery);
-    // let existingChat = null;
+      // });
 
-    // querySnapshot.forEach((doc) => {
-    //   const chat = doc.data();
-    //   if (chat.users.includes(user.userId)) {
-    //     existingChat = { ...chat, chatId: doc.id };
-    //   }
-    // });
-
-    // if (existingChat) {
-    //   navigation.navigate("Chat", {
-    //     chatId: existingChat.chatId,
-    //     chatName: existingChat.displayName,
-    //   });
-    // } else {
-    //   // Create a new chat
-    //   const newChatRef = doc(collection(dbFirestore, "chats"));
-    //   await setDoc(newChatRef, {
-    //     users: [currentUser.uid, user.userId],
-    //     usersNames: [currentUser.firstLast, user.firstLast],
-    //     createdAt: serverTimestamp(),
-    //     createdBy: currentUser.uid,
-    //     isGroupChat: false,
-    //     latestMessageText: "",
-    //     updatedAt: serverTimestamp(),
-    //     updatedBy: currentUser.uid,
-    //   });
-
-    //   navigation.navigate("Chat", { chatId: newChatRef.id });
-    // }
-    navigation.navigate("PrivateChat", { chatId: newChatId });
+      // // navigation.navigate("Chat", { chatId: newChatRef.id });
+      navigation.navigate("PrivateChat", { chatId: newChatId });
+    }
   };
   return (
     <PageContainer>
       <Input
         style={{ width: "100%", alignSelf: "center", margin: 10 }}
-        textAlign="center"
+        alignContent="center"
+        // textAlign="center"
       >
         <InputField
           placeholder="Search"
