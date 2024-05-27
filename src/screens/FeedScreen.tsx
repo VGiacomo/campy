@@ -84,7 +84,7 @@ const FeedScreen = ({ navigation }: RouterProps) => {
   };
 
   const goToCreatePost = () => {
-    dispatch(setStatePost({}));
+    dispatch(setStatePost(null));
     navigation.navigate("CreatePost");
   };
 

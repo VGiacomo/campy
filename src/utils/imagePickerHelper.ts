@@ -77,8 +77,14 @@ export const uploadImageAsync = async (uri: string, imageType: ImageType) => {
       pathFolder = ImageType.StatusImage;
       break;
     case ImageType.ProfileImage:
+      pathFolder = ImageType.ProfileImage;
+      break;
     default:
-      pathFolder = ImageType.ProfileImage; // Default to profileImages if not specified
+      // pathFolder = ImageType.ProfileImage; // Default to profileImages if not specified
+      pathFolder = "";
+  }
+  if (!pathFolder) {
+    throw new Error("Invalid image type specified");
   }
   const storageRef = ref(getStorage(app), `${pathFolder}/${uuid.v4()}`);
 

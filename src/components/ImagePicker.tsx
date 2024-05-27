@@ -42,10 +42,10 @@ const ImagePicker: React.FC<Props> = ({
         throw new Error("Could not upload image");
       }
 
-      const newData = { profilePicture: uploadUrl };
+      // const newData = { profilePicture: uploadUrl };
 
-      await updateSignedInUserData(userId, newData);
-      dispatch(updateLoggedInUserData({ newData }));
+      // await updateSignedInUserData(userId, newData);
+      // dispatch(updateLoggedInUserData({ newData }));
       // }
 
       setPostImageUrl(uploadUrl);
