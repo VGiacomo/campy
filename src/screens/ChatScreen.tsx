@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TextInput,
   Button,
   StyleSheet,
+  Alert,
 } from "react-native";
 import { NavigationProp, useRoute } from "@react-navigation/native";
 import {
@@ -20,11 +21,16 @@ import {
   serverTimestamp,
 } from "firebase/firestore";
 import { dbFirestore, auth } from "../../firebaseConfig";
-import { Pressable } from "@gluestack-ui/themed";
+import { Fab, Pressable } from "@gluestack-ui/themed";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { colors } from "../constants";
-import { getTimeAgoOrTime } from "../utils/helperFns";
-
+import {
+  convertMillisecondsToDuration,
+  getTimeAgoOrTime,
+} from "../utils/helperFns";
+import AudioRecording from "../components/AudioRecording";
+import { Audio } from "expo-av";
+import { Fontisto } from "@expo/vector-icons";
 interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
@@ -39,6 +45,9 @@ const ChatScreen = ({ navigation }: RouterProps) => {
   const [newMessage, setNewMessage] = useState("");
   const [title, setTitle] = useState(chatName || "Chat");
   const currentUser = auth.currentUser;
+  const scrollViewRef = useRef();
+  const [isAtBottom, setIsAtBottom] = useState(true);
+
   useEffect(() => {
     if (!chatName && currentUser) {
       fetchChatTitle();
@@ -100,50 +109,115 @@ const ChatScreen = ({ navigation }: RouterProps) => {
     );
   };
 
-  const formatTimestampToTime = (timestamp: any) => {
-    if (!timestamp) return "";
-    const date = new Date(
-      timestamp.seconds * 1000 + timestamp.nanoseconds / 1000000
-    );
-    const hours = date.getHours().toString().padStart(2, "0");
-    const minutes = date.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
+  const playAudio = async (uri: string) => {
+    try {
+      console.log(`Playing audio from URI: ${uri}`);
+      const { sound } = await Audio.Sound.createAsync(
+        { uri },
+        { shouldPlay: true }
+      );
+      await sound.playAsync();
+    } catch (error) {
+      console.error("Failed to play audio", error);
+      Alert.alert("Error", "Failed to play audio. Please try again later.");
+    }
   };
 
   const renderItem = ({ item }) => {
     const isCurrentUser = item.sentBy === currentUser!.uid;
-    console.log(item.sentAt, "item *********");
-    return (
-      <View
-        style={[
-          styles.messageContainer,
-          isCurrentUser
-            ? styles.messageContainerRight
-            : styles.messageContainerLeft,
-        ]}
-      >
+    console.log(item, "item *********");
+    if (item.downloadURL) {
+      return (
         <View
           style={[
-            styles.message,
-            isCurrentUser ? styles.messageRight : styles.messageLeft,
+            styles.messageContainer,
+            isCurrentUser
+              ? styles.messageContainerRight
+              : styles.messageContainerLeft,
           ]}
         >
-          <Text>{item.text}</Text>
-          <Text style={styles.timestamp}>
-            {getTimeAgoOrTime(item.sentAt.toString())}
-          </Text>
+          <View
+            style={[
+              styles.message,
+              isCurrentUser ? styles.messageRight : styles.messageLeft,
+            ]}
+          >
+            <Pressable
+              style={styles.sendButton}
+              onPress={() => playAudio(item.downloadURL)}
+            >
+              <Text>{convertMillisecondsToDuration(item.duration)}</Text>
+              <MaterialCommunityIcons name="play" size={24} color="black" />
+            </Pressable>
+            <Text style={styles.timestamp}>
+              {getTimeAgoOrTime(item.sentAt.toString())}
+            </Text>
+          </View>
         </View>
-      </View>
-    );
+      );
+    } else {
+      return (
+        <View
+          style={[
+            styles.messageContainer,
+            isCurrentUser
+              ? styles.messageContainerRight
+              : styles.messageContainerLeft,
+          ]}
+        >
+          <View
+            style={[
+              styles.message,
+              isCurrentUser ? styles.messageRight : styles.messageLeft,
+            ]}
+          >
+            <Text>{item.text}</Text>
+            <Text style={styles.timestamp}>
+              {getTimeAgoOrTime(item.sentAt.toString())}
+            </Text>
+          </View>
+        </View>
+      );
+    }
+  };
+
+  const scrollToBottom = () => {
+    scrollViewRef.current.scrollToEnd({ animated: true });
+  };
+
+  const handleScroll = (event: any) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    const isBottom =
+      layoutMeasurement.height + contentOffset.y >= contentSize.height - 20;
+    setIsAtBottom(isBottom);
   };
 
   return (
     <View style={styles.container}>
       <FlatList
+        ref={scrollViewRef}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        onContentSizeChange={scrollToBottom}
         data={messages}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
       />
+      {!isAtBottom && (
+        <Fab
+          bgColor={colors.lightPrimary}
+          opacity={0.8}
+          marginBottom={50}
+          size="md"
+          placement="bottom right"
+          isHovered={false}
+          isDisabled={false}
+          isPressed={false}
+          onPress={scrollToBottom}
+        >
+          <Fontisto name="angle-dobule-down" size={16} color="black" />
+        </Fab>
+      )}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -151,14 +225,18 @@ const ChatScreen = ({ navigation }: RouterProps) => {
           onChangeText={setNewMessage}
           placeholder="Type a message"
         />
-        <Pressable style={styles.sendButton} onPress={sendMessage}>
-          <MaterialCommunityIcons
-            name="send"
-            aria-label="Send"
-            size={24}
-            color="black"
-          />
-        </Pressable>
+        {!newMessage ? (
+          <AudioRecording chatId={chatId} />
+        ) : (
+          <Pressable style={styles.sendButton} onPress={sendMessage}>
+            <MaterialCommunityIcons
+              name="send"
+              aria-label="Send"
+              size={24}
+              color="black"
+            />
+          </Pressable>
+        )}
       </View>
     </View>
   );
