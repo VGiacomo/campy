@@ -31,6 +31,11 @@ import {
 import AudioRecording from "../components/AudioRecording";
 import { Audio } from "expo-av";
 import { Fontisto } from "@expo/vector-icons";
+import {
+  sendPushNotificationToUsers,
+  sendTextMessage,
+} from "../utils/actions/chatActions";
+import { getUserData } from "../utils/actions/authActions";
 interface RouterProps {
   navigation: NavigationProp<any, any>;
 }
@@ -47,8 +52,15 @@ const ChatScreen = ({ navigation }: RouterProps) => {
   const currentUser = auth.currentUser;
   const scrollViewRef = useRef();
   const [isAtBottom, setIsAtBottom] = useState(true);
+  const [currentUserData, setCurrentUserData] = useState<any>(null);
 
   useEffect(() => {
+    const getCurrentUserData = async () => {
+      const data = await getUserData(currentUser!.uid);
+      data && setCurrentUserData(data);
+    };
+    getCurrentUserData();
+
     if (!chatName && currentUser) {
       fetchChatTitle();
     }
@@ -58,7 +70,7 @@ const ChatScreen = ({ navigation }: RouterProps) => {
       orderBy("sentAt", "asc")
     );
     const unsubscribe = onSnapshot(messagesQuery, (querySnapshot) => {
-      const messagesList = [];
+      const messagesList = [] as any;
       querySnapshot.forEach((doc) => {
         messagesList.push({ ...doc.data(), id: doc.id });
       });
@@ -69,7 +81,6 @@ const ChatScreen = ({ navigation }: RouterProps) => {
   }, [chatId]);
 
   const fetchChatTitle = async () => {
-    console.log(chatName, "fetchChatTitle");
     const chatDoc = await getDoc(doc(dbFirestore, "chats", chatId));
     const chatData = chatDoc.data();
     if (chatData) {
@@ -107,7 +118,49 @@ const ChatScreen = ({ navigation }: RouterProps) => {
       },
       { merge: true }
     );
+    // send push notification to all users in chat except sender
+    const chatDoc = await getDoc(doc(dbFirestore, "chats", chatId));
+    const chatData = chatDoc.data();
+    if (chatData) {
+      const otherUserId = chatData.users.find(
+        (id: string) => id !== currentUser!.uid
+      );
+      const otherUserDoc = await getDoc(doc(dbFirestore, "users", otherUserId));
+      const otherUserData = otherUserDoc.data();
+      // if (otherUserData) {
+      //   const otherUserName = otherUserData.firstLast;
+      //   setTitle(otherUserName);
+      //   navigation.setOptions({ title: otherUserName });
+      // }
+      await sendPushNotificationToUsers({
+        chatUsers: otherUserId,
+        title: `${currentUserData?.firstName} ${currentUserData.lastName}`,
+        body: newMessage,
+        chatId: chatId,
+      });
+    }
   };
+
+  // pe SendMessageParams = {
+  //   chatId: string;
+  //   senderId: string;
+  //   messageText: string;
+  //   imageUrl?: string;
+  //   replyTo?: string; // other message Id
+  //   type?: string;
+  // };
+
+  // const onSendingMessage = async () => {
+  //   const data = {
+  //     chatId,
+  //     senderId: currentUser!.uid,
+  //     messageText: newMessage,
+  //     imageUrl: null,
+  //     // replyTo: null,
+  //     type: "text",
+  //   }
+  //   sendTextMessage(data);
+  // };
 
   const playAudio = async (uri: string) => {
     try {
@@ -123,9 +176,8 @@ const ChatScreen = ({ navigation }: RouterProps) => {
     }
   };
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }: { item: any }) => {
     const isCurrentUser = item.sentBy === currentUser!.uid;
-    console.log(item, "item *********");
     if (item.downloadURL) {
       return (
         <View

@@ -15,7 +15,17 @@ import {
 import { dbFirestore, getFirebaseApp } from "../../../firebaseConfig";
 import { Message, UserData } from "../store/types";
 import { ChatData as ChatDataType } from "../store/types";
-// import { getUserPushTokens } from "./authActions";
+import { getUserPushTokens } from "./authActions";
+import {
+  child,
+  get,
+  getDatabase,
+  push,
+  ref,
+  remove,
+  set,
+  update,
+} from "firebase/database";
 
 type ChatData = {
   users: string[];
@@ -105,89 +115,96 @@ export const getUserChats = async (userId: string) => {
 //   });
 // };
 
-// type SendMessageParams = {
-//   chatId: string;
-//   senderId: string;
-//   messageText: string;
-//   imageUrl?: string;
-//   replyTo?: string; // other message Id
-//   type?: string;
-// };
+type SendMessageParams = {
+  chatId: string;
+  senderId: string;
+  messageText: string;
+  imageUrl?: string;
+  // replyTo?: string; // other message Id
+  type?: string;
+};
 
-// const sendMessage = async (data: SendMessageParams) => {
-//   const { chatId, senderId, messageText, imageUrl, replyTo, type } = data;
+const sendMessage = async (data: SendMessageParams) => {
+  const {
+    chatId,
+    senderId,
+    messageText,
+    imageUrl,
+    // replyTo,
+    type,
+  } = data;
 
-//   const app = getFirebaseApp();
-//   const dbRef = ref(getDatabase());
+  const app = getFirebaseApp();
+  const dbRef = ref(getDatabase());
 
-//   // store messages for each chatId
-//   // record or store messages in the format of:
-//   // messages: {
-//   //     chatId1: {
-//   //         someMessageId1: {
-//   //             sentBy: senderId,
-//   //             sentAt: new Date().toISOString(),
-//   //             text: messageText,
-//   //             replyTo: replyTo,
-//   //             imageUrl: imageUrl,
-//   //         },
-//   //     }
-//   // }
-//   const messagesRef = child(dbRef, `messages/${chatId}`);
+  // store messages for each chatId
+  // record or store messages in the format of:
+  // messages: {
+  //     chatId1: {
+  //         someMessageId1: {
+  //             sentBy: senderId,
+  //             sentAt: new Date().toISOString(),
+  //             text: messageText,
+  //             replyTo: replyTo,
+  //             imageUrl: imageUrl,
+  //         },
+  //     }
+  // }
+  const messagesRef = child(dbRef, `messages/${chatId}`);
 
-//   const messageData: Omit<Message, "messageId"> = {
-//     sentBy: senderId,
-//     sentAt: new Date().toISOString(),
-//     text: messageText,
-//   };
+  const messageData: Omit<Message, "messageId"> = {
+    sentBy: senderId,
+    sentAt: new Date().toISOString(),
+    text: messageText,
+  };
 
-//   if (replyTo) {
-//     messageData.replyTo = replyTo;
-//   }
+  // if (replyTo) {
+  //   messageData.replyTo = replyTo;
+  // }
 
-//   if (imageUrl) {
-//     messageData.imageUrl = imageUrl;
-//   }
+  if (imageUrl) {
+    messageData.imageUrl = imageUrl;
+  }
 
-//   if (type) {
-//     messageData.type = type;
-//   }
+  if (type) {
+    messageData.type = type;
+  }
 
-//   await push(messagesRef, messageData);
+  await push(messagesRef, messageData);
 
-//   const chatRef = child(dbRef, `chats/${chatId}`);
-//   await update(chatRef, {
-//     updatedBy: senderId,
-//     updatedAt: new Date().toISOString(),
-//     latestMessageText: messageText,
-//   });
-// };
+  const chatRef = child(dbRef, `chats/${chatId}`);
+  await update(chatRef, {
+    updatedBy: senderId,
+    updatedAt: new Date().toISOString(),
+    latestMessageText: messageText,
+  });
+};
 
-// type sendTextMessageParams = Omit<
-//   SendMessageParams,
-//   "imageUrl" | "senderId"
-// > & {
-//   senderUserData: UserData;
-//   usersInChat: string[];
-// };
+type sendTextMessageParams = Omit<
+  SendMessageParams,
+  "imageUrl" | "senderId"
+> & {
+  senderUserData: UserData;
+  usersInChat: string[];
+};
 
-// export const sendTextMessage = async (data: sendTextMessageParams) => {
-//   await sendMessage({
-//     ...data,
-//     senderId: data.senderUserData.userId,
-//   });
+export const sendTextMessage = async (data: sendTextMessageParams) => {
+  await sendMessage({
+    ...data,
+    senderId: data.senderUserData.userId,
+  });
 
-//   // send push notification to all users in chat except sender
-//   const otherUsers = data.usersInChat.filter(
-//     (uid) => uid !== data.senderUserData.userId
-//   );
-//   await sendPushNotificationToUsers({
-//     chatUsers: otherUsers,
-//     title: `${data.senderUserData.firstName} ${data.senderUserData.lastName}`,
-//     body: data.messageText,
-//     chatId: data.chatId,
-//   });
-// };
+  // send push notification to all users in chat except sender
+  const otherUsers = data.usersInChat.filter(
+    (uid) => uid !== data.senderUserData.userId
+  );
+  await sendPushNotificationToUsers({
+    chatUsers: otherUsers,
+    title: `${data.senderUserData.firstName} ${data.senderUserData.lastName}`,
+    body: data.messageText,
+    chatId: data.chatId,
+  });
+};
 
 // type SendImageParams = Omit<SendMessageParams, "messageText" | "senderId"> & {
 //   senderUserData: UserData;
@@ -423,36 +440,36 @@ export const getUserChats = async (userId: string) => {
 //   }
 // };
 
-// type SendPushNotificationToUsersParams = {
-//   chatUsers: string[];
-//   title: string;
-//   body: string;
-//   chatId: string;
-// };
+type SendPushNotificationToUsersParams = {
+  chatUsers: string[];
+  title: string;
+  body: string;
+  chatId: string;
+};
 
-// const sendPushNotificationToUsers = (
-//   data: SendPushNotificationToUsersParams
-// ) => {
-//   const { chatUsers, title, body, chatId } = data;
-//   chatUsers.forEach(async (uid) => {
-//     console.log("test");
-//     const tokens = await getUserPushTokens(uid);
+export const sendPushNotificationToUsers = (
+  data: SendPushNotificationToUsersParams
+) => {
+  const { chatUsers, title, body, chatId } = data;
+  chatUsers.forEach(async (uid) => {
+    console.log("test");
+    const tokens = await getUserPushTokens(uid);
 
-//     for (const key in tokens) {
-//       const token = tokens[key];
+    for (const key in tokens) {
+      const token = tokens[key];
 
-//       await fetch("https://exp.host/--/api/v2/push/send", {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({
-//           to: token,
-//           title,
-//           body,
-//           data: { chatId },
-//         }),
-//       });
-//     }
-//   });
-// };
+      await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          to: token,
+          title,
+          body,
+          data: { chatId },
+        }),
+      });
+    }
+  });
+};

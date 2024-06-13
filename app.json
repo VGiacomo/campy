@@ -19,15 +19,19 @@
         }
       ]
     ],
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.alienato.campy"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.alienato.campy"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -37,6 +41,6 @@
         "projectId": "208f4220-6331-4b6b-94f1-6d6762b5b0f6"
       }
     },
-    "owner": "giacomoviscido"
+    "owner": "alienato"
   }
 }

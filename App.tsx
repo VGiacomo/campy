@@ -13,6 +13,7 @@ import { config } from "@gluestack-ui/config";
 import * as Font from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { registerForPushNotificationsAsync } from "./src/utils/notifications";
 
 // Keep the splash screen visible while we fetch resources(fonts)
 SplashScreen.preventAutoHideAsync();
@@ -53,6 +54,13 @@ export default function App() {
     onAuthStateChanged(auth, (user) => {
       console.log("user", user);
       setUser(user);
+    });
+
+    registerForPushNotificationsAsync().then((token) => {
+      if (token) {
+        // Save the token to your backend server or wherever you need it
+        console.log("Token received:", token);
+      }
     });
   }, []);
 
