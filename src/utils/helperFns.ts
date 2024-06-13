@@ -82,7 +82,6 @@ export function getDayAndDate(dateStr: string) {
 }
 
 export function convertMillisecondsToDuration(milliseconds: number) {
-  console.log(milliseconds, "milliseconds");
   const seconds = Math.floor((milliseconds / 1000) % 60);
   const minutes = Math.floor((milliseconds / 1000 / 60) % 60);
   const hours = Math.floor((milliseconds / 1000 / 60 / 60) % 24);

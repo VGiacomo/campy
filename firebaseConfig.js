@@ -26,7 +26,7 @@ export const getFirebaseApp = () => {
   return app;
 };
 // Initialize Realtime Database and get a reference to the service
-export const database = getDatabase(app);
+// export const database = getDatabase(app);
 
 // Initialize Cloud Storage and get a reference to the service
 export const storage = getStorage(app);

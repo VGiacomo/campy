@@ -47,7 +47,6 @@ function MenuButton({ item, loggedInUserId }: MenuItemProps) {
 
   function handleEdit() {
     if (isPost(item)) {
-      console.log(item, "item *********");
       goToEditPost();
     } else {
       console.log(item.postId, "postId");
