@@ -73,6 +73,7 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
           isDisabled={false}
           isInvalid={false}
           isReadOnly={false}
+          style={{ width: 300 }}
         >
           <InputField
             placeholder="Post Title"
@@ -80,10 +81,16 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
             value={postTitle}
           />
         </Input>
-        <Input style={{ height: 200, marginVertical: 10 }}>
+        <Input
+          style={{ height: 200, width: 300, marginVertical: 10 }}
+          size="md"
+          variant="outline"
+          isDisabled={false}
+          isInvalid={false}
+          isReadOnly={false}
+        >
           <InputField
             multiline
-            size="md"
             maxLength={300}
             placeholder="What's on your mind?"
             onChangeText={setPostMessage}
