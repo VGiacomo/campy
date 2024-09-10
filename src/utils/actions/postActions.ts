@@ -26,7 +26,7 @@ import {
 } from "firebase/firestore";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Device from "expo-device";
-import * as Notifications from "expo-notifications";
+// import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
 import { dbFirestore, getFirebaseApp } from "../../../firebaseConfig";
 import { authenticate, logout } from "../store/authSlice";

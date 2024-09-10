@@ -21,14 +21,14 @@ import ProfileImage from "../components/ProfileImage";
 import Input from "../components/Input";
 import { Feather, FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import {
-  Badge,
-  BadgeIcon,
-  BadgeText,
-  CheckIcon,
-  Checkbox,
-  CheckboxIcon,
-  CheckboxIndicator,
-  CheckboxLabel,
+  // Badge,
+  // BadgeIcon,
+  // BadgeText,
+  // CheckIcon,
+  // Checkbox,
+  // CheckboxIcon,
+  // CheckboxIndicator,
+  // CheckboxLabel,
   FormControl,
   HStack,
   Heading,
@@ -192,7 +192,7 @@ const UserProfileScreen = () => {
           </Badge>
         </HStack> */}
 
-        <FormControl>
+        {/* <FormControl>
           <HStack space="sm" style={{ flexWrap: "wrap" }}>
             <Heading size="sm">I speak</Heading>
             {languageOptions.map((option) => (
@@ -211,7 +211,7 @@ const UserProfileScreen = () => {
               </Checkbox>
             ))}
           </HStack>
-        </FormControl>
+        </FormControl> */}
 
         <View style={{ marginTop: 20, width: "100%" }}>
           {showSuccessMessage && <Text>Saved!</Text>}

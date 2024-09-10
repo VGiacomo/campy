@@ -17,6 +17,12 @@
         {
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow $(PRODUCT_NAME) to access your photos"
+        }
       ]
     ],
     "assetBundlePatterns": ["**/*"],
@@ -27,16 +33,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.giacomov.campy"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "208f4220-6331-4b6b-94f1-6d6762b5b0f6"
+        "projectId": "a92e5997-3fd6-442b-9b50-29fb0d7ea41b"
       }
     },
-    "owner": "giacomoviscido"
+    "owner": "giacomov"
   }
 }
