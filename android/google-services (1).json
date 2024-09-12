@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "433820807377",
+    "project_id": "campy-2cf7f",
+    "storage_bucket": "campy-2cf7f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:433820807377:android:02aff2b01233b56af0d5f0",
+        "android_client_info": {
+          "package_name": "com.giacomov.campy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBeyFvKM-MRLANFoDQkWsBy2oH2ormoLk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
