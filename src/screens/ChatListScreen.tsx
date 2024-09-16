@@ -1,4 +1,11 @@
-import { FlatList, StyleSheet, Text, View } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { NavigationProp } from "@react-navigation/native";
 import { auth, dbFirestore } from "../../firebaseConfig";
@@ -29,60 +36,75 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [chats, setChats] = useState<any[]>([]);
   const currentUser = auth.currentUser;
+  // const [refreshing, setRefreshing] = useState(false);
+
+  // const onRefresh = React.useCallback(() => {
+  //   setRefreshing(true);
+  //   // fetchChats();
+  //   setTimeout(() => {
+  //     setRefreshing(false);
+  //   }, 2000);
+  // }, []);
 
   useEffect(() => {
     fetchUsers();
-    fetchChats();
+    // fetchChats();
 
-    // const chatRef = collection(dbFirestore, "chats");
+    if (!currentUser) return;
 
-    // const subscriber = onSnapshot(chatRef, {
-    //   next: async (snapshot) => {
-    //     const chats: ChatData[] = [];
-    //     snapshot.docs.forEach((doc) => {
-    //       chats.push({
-    //         users: doc.data().users,
-    //         usersImages: doc.data().usersImages,
-    //         usersNames: doc.data().usersNames,
-    //         createdAt: doc.data().createdAt,
-    //         createdBy: doc.data().createdBy,
-    //         chatId: doc.id,
-    //         latestMessageText: doc.data().latestMessageText,
-    //         updatedAt: doc.data().updatedAt,
-    //         updatedBy: doc.data().updatedBy,
-    //       });
-    //     });
-    //     chats.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
-    //     chats.filter((chat) => chat.users.includes(currentUser!.uid));
-    //     const otherUsersInChatsData: any = {};
-    //     for (const chat of chats) {
-    //       for (const userId of chat.users) {
-    //         if (userId !== currentUser?.uid && !otherUsersInChatsData[userId]) {
-    //           const userDoc = await getDoc(doc(dbFirestore, "users", userId));
-    //           otherUsersInChatsData[userId] = userDoc.data();
-    //         }
-    //       }
-    //     }
-    //     setChats(
-    //       chats.map((chat) => ({
-    //         ...chat,
-    //         chatImage:
-    //           currentUser &&
-    //           otherUsersInChatsData[
-    //             chat.users.find((userId: string) => userId !== currentUser.uid)!
-    //           ]?.profilePicture,
-    //         displayName:
-    //           currentUser &&
-    //           otherUsersInChatsData[
-    //             chat.users.find((userId: string) => userId !== currentUser.uid)!
-    //           ]?.firstLast,
-    //       }))
-    //     );
-    //   },
-    // });
+    const chatRef = query(
+      collection(dbFirestore, "chats"),
+      where("users", "array-contains", currentUser.uid)
+    );
 
-    // // // Unsubscribe from events when no longer in use
-    // return () => subscriber();
+    const subscriber = onSnapshot(chatRef, {
+      next: async (snapshot) => {
+        const chats: ChatData[] = [];
+        snapshot.docs.forEach((doc) => {
+          chats.push({
+            users: doc.data().users,
+            usersImages: doc.data().usersImages,
+            usersNames: doc.data().usersNames,
+            createdAt: doc.data().createdAt,
+            createdBy: doc.data().createdBy,
+            chatId: doc.id,
+            latestMessageText: doc.data().latestMessageText,
+            updatedAt: doc.data().updatedAt,
+            updatedBy: doc.data().updatedBy,
+          });
+        });
+        chats.filter((chat) => chat.users.includes(currentUser!.uid));
+        chats.sort((a, b) => (a.updatedAt > b.updatedAt ? -1 : 1));
+        const otherUsersInChatsData: any = {};
+        for (const chat of chats) {
+          for (const userId of chat.users) {
+            if (userId !== currentUser?.uid && !otherUsersInChatsData[userId]) {
+              const userDoc = await getDoc(doc(dbFirestore, "users", userId));
+              otherUsersInChatsData[userId] = userDoc.data();
+            }
+          }
+        }
+        console.log(chats, "chats");
+        setChats(
+          chats.map((chat) => ({
+            ...chat,
+            chatImage:
+              currentUser &&
+              otherUsersInChatsData[
+                chat.users.find((userId: string) => userId !== currentUser.uid)!
+              ]?.profilePicture,
+            displayName:
+              currentUser &&
+              otherUsersInChatsData[
+                chat.users.find((userId: string) => userId !== currentUser.uid)!
+              ]?.firstLast,
+          }))
+        );
+      },
+    });
+
+    // // Unsubscribe from events when no longer in use
+    return () => subscriber();
   }, []);
 
   const fetchUsers = async () => {
@@ -95,43 +117,43 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
     setUsers(usersData);
   };
 
-  const fetchChats = async () => {
-    if (!currentUser) return;
+  // const fetchChats = async () => {
+  //   if (!currentUser) return;
 
-    const chatsQuery = query(
-      collection(dbFirestore, "chats"),
-      where("users", "array-contains", currentUser.uid)
-    );
-    const querySnapshot = await getDocs(chatsQuery);
-    const chatsData: any[] = [];
-    const otherUsersInChatsData: any = {};
-    for (const qsDoc of querySnapshot.docs) {
-      const chat = { ...qsDoc.data(), chatId: qsDoc.id };
-      for (const userId of chat.users) {
-        if (userId !== currentUser.uid && !otherUsersInChatsData[userId]) {
-          const userDoc = await getDoc(doc(dbFirestore, "users", userId));
-          otherUsersInChatsData[userId] = userDoc.data();
-        }
-      }
-      chatsData.push(chat);
-    }
+  //   const chatsQuery = query(
+  //     collection(dbFirestore, "chats"),
+  //     where("users", "array-contains", currentUser.uid)
+  //   );
+  //   const querySnapshot = await getDocs(chatsQuery);
+  //   const chatsData: any[] = [];
+  //   const otherUsersInChatsData: any = {};
+  //   for (const qsDoc of querySnapshot.docs) {
+  //     const chat = { ...qsDoc.data(), chatId: qsDoc.id };
+  //     for (const userId of chat.users) {
+  //       if (userId !== currentUser.uid && !otherUsersInChatsData[userId]) {
+  //         const userDoc = await getDoc(doc(dbFirestore, "users", userId));
+  //         otherUsersInChatsData[userId] = userDoc.data();
+  //       }
+  //     }
+  //     chatsData.push(chat);
+  //   }
 
-    setChats(
-      chatsData.map((chat) => ({
-        ...chat,
-        chatImage: chat.chatImage
-          ? chat.chatImage
-          : otherUsersInChatsData[
-              chat.users.find((userId: string) => userId !== currentUser.uid)
-            ]?.profilePicture,
-        displayName: chat.chatName
-          ? chat.chatName
-          : otherUsersInChatsData[
-              chat.users.find((userId: string) => userId !== currentUser.uid)
-            ]?.firstLast,
-      }))
-    );
-  };
+  //   setChats(
+  //     chatsData.map((chat) => ({
+  //       ...chat,
+  //       chatImage: chat.chatImage
+  //         ? chat.chatImage
+  //         : otherUsersInChatsData[
+  //             chat.users.find((userId: string) => userId !== currentUser.uid)
+  //           ]?.profilePicture,
+  //       displayName: chat.chatName
+  //         ? chat.chatName
+  //         : otherUsersInChatsData[
+  //             chat.users.find((userId: string) => userId !== currentUser.uid)
+  //           ]?.firstLast,
+  //     }))
+  //   );
+  // };
   const createNewChat = async () => {
     if (!currentUser) return;
     navigation.navigate("NewChat");
@@ -167,6 +189,9 @@ const ChatListScreen = ({ navigation }: RouterProps) => {
               }
             />
           )}
+          // refreshControl={
+          //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          // }
           keyExtractor={(item) => item.chatId}
         />
       </SafeAreaView>
@@ -180,6 +205,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+  },
+  scrollView: {
+    flex: 1,
+    // backgroundColor: "pink",
+    alignItems: "center",
+    justifyContent: "center",
   },
   header: {
     fontSize: 18,
