@@ -112,7 +112,7 @@ const PostCard: React.FC<PostCardProps> = ({
         <Image
           alt="post image"
           size="lg"
-          width="100%"
+          width={100}
           borderRadius={5}
           source={{
             uri: post.imageUrl,

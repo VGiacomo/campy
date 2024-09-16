@@ -1,6 +1,5 @@
 // AuthScreen.tsx
 import { useState } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoginScreen from "../screens/LoginScreen";
 import SignupScreen from "../screens/SignupScreen";
 import {
@@ -16,7 +15,6 @@ import {
 } from "react-native";
 
 import PageContainer from "../components/PageContainer";
-import { NavigationProp } from "@react-navigation/native";
 import { colors } from "../constants/colors";
 
 const AuthNavigator = () => {
