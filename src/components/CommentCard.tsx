@@ -89,12 +89,14 @@ const CommentCard: React.FC<CommentCardProps> = ({
       <HStack space="md" marginBottom={3}>
         <Avatar size="sm" bg="$backgroundLight600">
           <AvatarFallbackText>{authorData?.firstLast}</AvatarFallbackText>
-          <AvatarImage
-            alt="avatar"
-            source={{
-              uri: authorData?.profilePicture,
-            }}
-          />
+          {authorData?.profilePicture ? (
+            <AvatarImage
+              alt="avatar"
+              source={{
+                uri: authorData.profilePicture,
+              }}
+            />
+          ) : null}
         </Avatar>
         <VStack>
           <Heading size="sm">{authorData?.firstLast}</Heading>

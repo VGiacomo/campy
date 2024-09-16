@@ -32,12 +32,14 @@ const ChatCard = ({ chat, onPress }: ChatCardProps) => {
         <HStack space="md">
           <Avatar>
             <AvatarFallbackText>{chat.displayName}</AvatarFallbackText>
-            <AvatarImage
-              alt="Avatar image"
-              source={{
-                uri: chat.chatImage,
-              }}
-            />
+            {chat?.chatImage ? (
+              <AvatarImage
+                alt="Avatar image"
+                source={{
+                  uri: chat.chatImage,
+                }}
+              />
+            ) : null}
           </Avatar>
           <VStack>
             <Heading size="md">{chat.displayName}</Heading>

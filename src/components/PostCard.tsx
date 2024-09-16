@@ -83,12 +83,14 @@ const PostCard: React.FC<PostCardProps> = ({
       <HStack space="md" marginBottom={3}>
         <Avatar size="sm" bg="$backgroundLight600">
           <AvatarFallbackText>{authorData?.firstLast}</AvatarFallbackText>
-          <AvatarImage
-            alt="avatar"
-            source={{
-              uri: authorData?.profilePicture,
-            }}
-          />
+          {authorData?.profilePicture ? (
+            <AvatarImage
+              alt="avatar"
+              source={{
+                uri: authorData.profilePicture,
+              }}
+            />
+          ) : null}
         </Avatar>
         <VStack>
           <Heading size="sm">{authorData?.firstLast}</Heading>
@@ -106,7 +108,7 @@ const PostCard: React.FC<PostCardProps> = ({
           </View>
         )}
       </HStack>
-      {post.imageUrl && (
+      {post.imageUrl ? (
         <Image
           alt="post image"
           size="lg"
@@ -116,7 +118,7 @@ const PostCard: React.FC<PostCardProps> = ({
             uri: post.imageUrl,
           }}
         />
-      )}
+      ) : null}
       <Heading
         //   size="md"
         fontFamily="$heading"
