@@ -103,13 +103,13 @@ const CreatePostScreen = ({ navigation }: RouterProps) => {
           setUploading={setUploading}
           userId={auth.currentUser!.uid}
         />
-        {postImageUrl && (
+        {postImageUrl ? (
           <Image
             alt="post image"
             source={{ uri: postImageUrl }}
             style={styles.image}
           />
-        )}
+        ) : null}
 
         <SubmitButton
           title={!selectedPost ? "Publish Post" : "Update Post"}
