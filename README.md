@@ -1,6 +1,8 @@
 # Welcome to Campy !
 
-<img src="assets\images\logo.png" alt="Logo" width="180" height="180" align="center">
+<p align="center">
+<img src="assets\images\logo.png" alt="Logo" width="80" align="center">
+</p>
 
 This is a proof-of-concept project.
 Campy is a social networking platform designed exclusively for the camping community.
@@ -53,11 +55,13 @@ npx expo start
 
 ## Usage
 
-<img src="assets/screenshots/Login_Screen.jpg" alt="Login Screen" width="360" height="640">
+<p align="center">
+<img src="assets/screenshots/Login_Screen.jpg" alt="Login Screen" width="240">
 
-<img src="assets/screenshots/Feed_Screen.jpg" alt="Feed Screen" width="360" height="640">
+<img src="assets/screenshots/Feed_Screen.jpg" alt="Feed Screen" width="240">
 
-<img src="assets/screenshots/Chat_Screen.jpg" alt="Chat Screen" width="360" height="640">
+<img src="assets/screenshots/Chat_Screen.jpg" alt="Chat Screen" width="240">
+</p>
 
 ## Features
 
