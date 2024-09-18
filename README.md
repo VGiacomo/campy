@@ -1,6 +1,6 @@
 # Welcome to Campy !
 
-./assets/logo.png
+<img src="assets\images\logo.png" alt="Logo" width="180" height="180" align="center">
 
 This is a proof-of-concept project.
 Campy is a social networking platform designed exclusively for the camping community.
@@ -27,6 +27,7 @@ Connected to Firebase for authentication and storage.
 
 ## Installation
 
+```bash
 1. Clone the repository:
 
 - git clone https://github.com/VGiacomo/campy.git
@@ -42,14 +43,15 @@ Connected to Firebase for authentication and storage.
 4. Start the app:
 
 - npx expo start
+```
 
 ## Usage
 
-./assets/screenshots/Login_Screen.jpg
+<img src="assets/screenshots/Login_Screen.jpg">
 
-./assets/screenshots/Feed_Screen.jpg
+<img src="assets/screenshots/Feed_Screen.jpg">
 
-./assets/screenshots/Chat_Screen.jpg
+<img src="assets/screenshots/Chat_Screen.jpg">
 
 ## Features
 
@@ -60,12 +62,19 @@ Connected to Firebase for authentication and storage.
 - You can search for users and start private chats
 - In the chat, you can send text and audio messages
 
-## Contributing
+<!-- ROADMAP -->
 
-## License
+## Roadmap
+
+- [x] Add live update in Feed and Chat screens
+- [ ] Add Push notifications
+- [ ] When editing a post image, delete the old one in the firebase storage
+- [ ] Multi-language Support
+  - [ ] French
+  - [ ] Italian
 
 ## Contact
 
-Email: dev4change@gmail.com
+My name is Giacomo and my email is dev4change@gmail.com
 
 Campy CTA website: https://campers-landing-page.vercel.app/
