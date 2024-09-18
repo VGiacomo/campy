@@ -27,31 +27,37 @@ Connected to Firebase for authentication and storage.
 
 ## Installation
 
-```bash
 1. Clone the repository:
 
-- git clone https://github.com/VGiacomo/campy.git
+```bash
+git clone https://github.com/VGiacomo/campy.git
+```
 
 2. Change directory:
 
-- cd campy
+```bash
+cd campy
+```
 
 3. Install dependencies:
 
-- npm install
+```bash
+npm install
+```
 
 4. Start the app:
 
-- npx expo start
+```bash
+npx expo start
 ```
 
 ## Usage
 
-<img src="assets/screenshots/Login_Screen.jpg">
+<img src="assets/screenshots/Login_Screen.jpg" alt="Login Screen" width="360" height="640">
 
-<img src="assets/screenshots/Feed_Screen.jpg">
+<img src="assets/screenshots/Feed_Screen.jpg" alt="Feed Screen" width="360" height="640">
 
-<img src="assets/screenshots/Chat_Screen.jpg">
+<img src="assets/screenshots/Chat_Screen.jpg" alt="Chat Screen" width="360" height="640">
 
 ## Features
 
